@@ -1,0 +1,10 @@
+/snap/clion/305/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -S /home/laptop26/Documents/Retele/flash_cache_CDN -B /home/laptop26/Documents/Retele/flash_cache_CDN/cmake-build-debug
+-- The CXX compiler identification is GNU 13.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/laptop26/Documents/Retele/flash_cache_CDN/cmake-build-debug
