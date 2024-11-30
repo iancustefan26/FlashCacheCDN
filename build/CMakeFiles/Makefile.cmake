@@ -126,5 +126,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/FlashCacheCDN.dir/DependInfo.cmake"
+  "CMakeFiles/client.dir/DependInfo.cmake"
+  "CMakeFiles/edge_server.dir/DependInfo.cmake"
+  "CMakeFiles/EDNS_server.dir/DependInfo.cmake"
+  "CMakeFiles/server.dir/DependInfo.cmake"
   )

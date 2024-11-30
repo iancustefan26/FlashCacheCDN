@@ -117,24 +117,87 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named FlashCacheCDN
+# Target rules for targets named client
 
 # Build rule for target.
-FlashCacheCDN: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FlashCacheCDN
-.PHONY : FlashCacheCDN
+client: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 client
+.PHONY : client
 
 # fast build rule for target.
-FlashCacheCDN/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FlashCacheCDN.dir/build.make CMakeFiles/FlashCacheCDN.dir/build
-.PHONY : FlashCacheCDN/fast
+client/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
+.PHONY : client/fast
+
+#=============================================================================
+# Target rules for targets named edge_server
+
+# Build rule for target.
+edge_server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 edge_server
+.PHONY : edge_server
+
+# fast build rule for target.
+edge_server/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/edge_server.dir/build.make CMakeFiles/edge_server.dir/build
+.PHONY : edge_server/fast
+
+#=============================================================================
+# Target rules for targets named EDNS_server
+
+# Build rule for target.
+EDNS_server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 EDNS_server
+.PHONY : EDNS_server
+
+# fast build rule for target.
+EDNS_server/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EDNS_server.dir/build.make CMakeFiles/EDNS_server.dir/build
+.PHONY : EDNS_server/fast
+
+#=============================================================================
+# Target rules for targets named server
+
+# Build rule for target.
+server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server
+.PHONY : server
+
+# fast build rule for target.
+server/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
+.PHONY : server/fast
+
+src/EDNS_server/main.o: src/EDNS_server/main.cpp.o
+.PHONY : src/EDNS_server/main.o
+
+# target to build an object file
+src/EDNS_server/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EDNS_server.dir/build.make CMakeFiles/EDNS_server.dir/src/EDNS_server/main.cpp.o
+.PHONY : src/EDNS_server/main.cpp.o
+
+src/EDNS_server/main.i: src/EDNS_server/main.cpp.i
+.PHONY : src/EDNS_server/main.i
+
+# target to preprocess a source file
+src/EDNS_server/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EDNS_server.dir/build.make CMakeFiles/EDNS_server.dir/src/EDNS_server/main.cpp.i
+.PHONY : src/EDNS_server/main.cpp.i
+
+src/EDNS_server/main.s: src/EDNS_server/main.cpp.s
+.PHONY : src/EDNS_server/main.s
+
+# target to generate assembly for a file
+src/EDNS_server/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/EDNS_server.dir/build.make CMakeFiles/EDNS_server.dir/src/EDNS_server/main.cpp.s
+.PHONY : src/EDNS_server/main.cpp.s
 
 src/client/main.o: src/client/main.cpp.o
 .PHONY : src/client/main.o
 
 # target to build an object file
 src/client/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FlashCacheCDN.dir/build.make CMakeFiles/FlashCacheCDN.dir/src/client/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/main.cpp.o
 .PHONY : src/client/main.cpp.o
 
 src/client/main.i: src/client/main.cpp.i
@@ -142,7 +205,7 @@ src/client/main.i: src/client/main.cpp.i
 
 # target to preprocess a source file
 src/client/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FlashCacheCDN.dir/build.make CMakeFiles/FlashCacheCDN.dir/src/client/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/main.cpp.i
 .PHONY : src/client/main.cpp.i
 
 src/client/main.s: src/client/main.cpp.s
@@ -150,8 +213,56 @@ src/client/main.s: src/client/main.cpp.s
 
 # target to generate assembly for a file
 src/client/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FlashCacheCDN.dir/build.make CMakeFiles/FlashCacheCDN.dir/src/client/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/main.cpp.s
 .PHONY : src/client/main.cpp.s
+
+src/edge_server/main.o: src/edge_server/main.cpp.o
+.PHONY : src/edge_server/main.o
+
+# target to build an object file
+src/edge_server/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/edge_server.dir/build.make CMakeFiles/edge_server.dir/src/edge_server/main.cpp.o
+.PHONY : src/edge_server/main.cpp.o
+
+src/edge_server/main.i: src/edge_server/main.cpp.i
+.PHONY : src/edge_server/main.i
+
+# target to preprocess a source file
+src/edge_server/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/edge_server.dir/build.make CMakeFiles/edge_server.dir/src/edge_server/main.cpp.i
+.PHONY : src/edge_server/main.cpp.i
+
+src/edge_server/main.s: src/edge_server/main.cpp.s
+.PHONY : src/edge_server/main.s
+
+# target to generate assembly for a file
+src/edge_server/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/edge_server.dir/build.make CMakeFiles/edge_server.dir/src/edge_server/main.cpp.s
+.PHONY : src/edge_server/main.cpp.s
+
+src/server/main.o: src/server/main.cpp.o
+.PHONY : src/server/main.o
+
+# target to build an object file
+src/server/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/server/main.cpp.o
+.PHONY : src/server/main.cpp.o
+
+src/server/main.i: src/server/main.cpp.i
+.PHONY : src/server/main.i
+
+# target to preprocess a source file
+src/server/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/server/main.cpp.i
+.PHONY : src/server/main.cpp.i
+
+src/server/main.s: src/server/main.cpp.s
+.PHONY : src/server/main.s
+
+# target to generate assembly for a file
+src/server/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/server/main.cpp.s
+.PHONY : src/server/main.cpp.s
 
 # Help Target
 help:
@@ -161,10 +272,22 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... FlashCacheCDN"
+	@echo "... EDNS_server"
+	@echo "... client"
+	@echo "... edge_server"
+	@echo "... server"
+	@echo "... src/EDNS_server/main.o"
+	@echo "... src/EDNS_server/main.i"
+	@echo "... src/EDNS_server/main.s"
 	@echo "... src/client/main.o"
 	@echo "... src/client/main.i"
 	@echo "... src/client/main.s"
+	@echo "... src/edge_server/main.o"
+	@echo "... src/edge_server/main.i"
+	@echo "... src/edge_server/main.s"
+	@echo "... src/server/main.o"
+	@echo "... src/server/main.i"
+	@echo "... src/server/main.s"
 .PHONY : help
 
 

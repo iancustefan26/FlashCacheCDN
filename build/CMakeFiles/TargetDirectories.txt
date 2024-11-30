@@ -1,3 +1,6 @@
-/home/laptop26/Documents/FlashCacheCDN/build/CMakeFiles/FlashCacheCDN.dir
+/home/laptop26/Documents/FlashCacheCDN/build/CMakeFiles/client.dir
+/home/laptop26/Documents/FlashCacheCDN/build/CMakeFiles/edge_server.dir
+/home/laptop26/Documents/FlashCacheCDN/build/CMakeFiles/EDNS_server.dir
+/home/laptop26/Documents/FlashCacheCDN/build/CMakeFiles/server.dir
 /home/laptop26/Documents/FlashCacheCDN/build/CMakeFiles/edit_cache.dir
 /home/laptop26/Documents/FlashCacheCDN/build/CMakeFiles/rebuild_cache.dir

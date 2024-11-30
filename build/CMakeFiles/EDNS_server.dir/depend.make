@@ -1,2 +1,2 @@
-# Empty dependencies file for FlashCacheCDN.
+# Empty dependencies file for EDNS_server.
 # This may be replaced when dependencies are built.

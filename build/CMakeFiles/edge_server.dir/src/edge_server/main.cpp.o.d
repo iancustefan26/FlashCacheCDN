@@ -1,5 +1,5 @@
-CMakeFiles/FlashCacheCDN.dir/src/client/main.cpp.o: \
- /home/laptop26/Documents/FlashCacheCDN/src/client/main.cpp \
+CMakeFiles/edge_server.dir/src/edge_server/main.cpp.o: \
+ /home/laptop26/Documents/FlashCacheCDN/src/edge_server/main.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/13/iostream \
  /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \

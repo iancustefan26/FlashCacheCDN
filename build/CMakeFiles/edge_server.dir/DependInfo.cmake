@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/laptop26/Documents/FlashCacheCDN/src/client/main.cpp" "CMakeFiles/FlashCacheCDN.dir/src/client/main.cpp.o" "gcc" "CMakeFiles/FlashCacheCDN.dir/src/client/main.cpp.o.d"
+  "/home/laptop26/Documents/FlashCacheCDN/src/edge_server/main.cpp" "CMakeFiles/edge_server.dir/src/edge_server/main.cpp.o" "gcc" "CMakeFiles/edge_server.dir/src/edge_server/main.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
