@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/EDNS_server.dir/src/EDNS_server/main.cpp.o -o EDNS_server 
