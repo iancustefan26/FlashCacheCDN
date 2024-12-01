@@ -27,6 +27,26 @@ in_addr_t handle_request(const char* request, const size_t length)
   return 0; // Provizor
 }
 
+void respond_to_client(const int socket_fd)
+{
+  sockaddr_in client;
+  socklen_t len = sizeof(client);
+  const int client_fd = accept(socket_fd, (struct sockaddr *)&client, &len);
+  if (client_fd == -1)
+    throw runtime_error("accept() failed");
+  size_t packet_size;
+  if (recv(client_fd, &packet_size, sizeof(size_t), 0) == -1)
+    throw runtime_error("recv() failed");
+  char request[packet_size];
+  if (recv(client_fd, request, packet_size, 0) == -1)
+    throw runtime_error("recv() failed");
+  cout << "--------------------------\n";
+  const in_addr_t response = handle_request(request, packet_size);
+  cout << "--------------------------\n";
+  if (send(client_fd, &response, sizeof(in_addr_t), 0) == -1)
+    throw runtime_error("Sending response to client failed");
+  close(client_fd);
+}
 
 int main() {
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -41,31 +61,22 @@ int main() {
   // Setting REUSEADDR option to avoid bind() errors when restarting the server in a short period of time (the used port is still cached)
   if (bind(socket_fd, (struct sockaddr *)&server, sizeof(server)) == -1)
     throw runtime_error("bind() failed");
-  const int optval = 1;
+  constexpr int optval = 1;
   if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) < 0)
     throw runtime_error("setsockopt() failed");
   cout << "EDNS0 server listening on IP: " << inet_ntoa(server.sin_addr) << " Port:" << PORT << "\n";
   if (listen(socket_fd, 5) == -1)
     throw runtime_error("listen() failed");
-  sockaddr_in client;
-  socklen_t len = sizeof(client);
   while (true)
   {
-    int client_fd = accept(socket_fd, (struct sockaddr *)&client, &len);
-    if (client_fd == -1)
-      throw runtime_error("accept() failed");
-    size_t packet_size;
-    if (recv(client_fd, &packet_size, sizeof(size_t), 0) == -1)
-      throw runtime_error("recv() failed");
-    char request[packet_size];
-    if (recv(client_fd, request, packet_size, 0) == -1)
-      throw runtime_error("recv() failed");
-    cout << "--------------------------\n";
-    const in_addr_t response = handle_request(request, packet_size);
-    cout << "--------------------------\n";
-    if (send(client_fd, &response, sizeof(in_addr_t), 0) == -1)
-      throw runtime_error("Sending response to client failed");
-    close(client_fd);
+    try
+    {
+      respond_to_client(socket_fd);
+    }
+    catch (exception& e)
+    {
+      std::cerr << "Serving client failed: " << e.what() << "\n";
+    }
   }
   return 0;
 }
