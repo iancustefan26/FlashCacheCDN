@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <string>
 #include <curl/curl.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <cstring>
 using namespace std;
 
 
@@ -41,41 +44,86 @@ string get_public_ipv4()
 }
 
 
-int main() {
-  string resource_name;
+int main(int argc, char* argv[]) {
+  if (argc != 2)
+  {
+    cerr << "Usage: " << argv[0] << " <IP Address of DNS server>" << endl;
+    return EXIT_SUCCESS;
+  }
+  string resource;
   const string public_ip = get_public_ipv4();
-  int request_number = 0;
+  int request_number = 1;
   cout << "Hello, Client! Welcome to my CDN!\n";
   cout << "Your public IPv4 Address: " << public_ip << "\n\n";
-  cout << "Request a resource or q to quit: ";
-  cin >> resource_name;
-  request_number++;
-  if (resource_name == "q")
+  cout << "1.Request a resource or q to quit: ";
+  cin >> resource;
+  if (resource == "q")
   {
     cout << "Quit.\n";
     return EXIT_SUCCESS;
   }
   while (true)
   {
+    // Handling concurrent I/O operations
+    // The main process is handling INPUT operations and the child communicates with the EDNS0 server and
+    // establishes a connection with the received edge server trough TCP
     pid_t child_pid = fork();
     switch (child_pid)
     {
     case -1:
       throw runtime_error("fork failed");
     case 0:
-      // Child process - STDOUT (Response from the DNS server)
-        sleep(2);
-        cout << "\nResponse from DNS server for request #" << request_number << ": " << child_pid << "\n";
-      return EXIT_SUCCESS;
-    default:
-      // Parent process - STDIN ( Input from user, requests)
-      cout << "Request a resource or q to quit: ";
-      cin >> resource_name;
-      request_number++;
-      if (resource_name == "q")
       {
-        cout << "Quit.\n";
+        // Child process - STDOUT (Response from the DNS server)
+        // Sending requested resource to the EDNS0 server trough socket and waiting for a convenient CDN IP address
+        int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+        if (socket_fd == -1)
+          throw runtime_error("socket for EDNS0 failed");
+        sockaddr_in dns_server;
+        dns_server.sin_family = AF_INET;
+        dns_server.sin_port = htons(5053);
+        dns_server.sin_addr.s_addr = inet_addr(argv[1]); // argv[1] = EDNS0's IP address
+        if (connect(socket_fd, (sockaddr*)&dns_server, sizeof(dns_server)) < 0)
+          throw runtime_error("connect to EDNS0 failed");
+
+        // Creating the packet
+        const size_t dns_packet_length = 4 + resource.length() + 1 + sizeof(uint32_t); // length header + sender's public IPv4 (sizeof(uint32_t)) + request + NULL
+        const auto dns_packet = new unsigned char[dns_packet_length];
+        const auto pub_ipv4n_addr = inet_addr(public_ip.c_str());
+        memcpy(dns_packet, &dns_packet_length, sizeof(size_t));
+        memcpy(dns_packet + sizeof(size_t), resource.c_str() , resource.length() + 1);
+        memcpy(dns_packet + sizeof(size_t) + resource.length() + 1, &pub_ipv4n_addr, sizeof(in_addr_t));
+
+        // Sending the packet to the EDNS0 server
+        if (send(socket_fd, dns_packet, dns_packet_length, 0) == -1)
+        {
+          throw runtime_error("Packet sending to EDNS0 server failed");
+          close(socket_fd);
+          delete[] dns_packet; // Freeing the allocated memory
+        }
+        delete[] dns_packet; // Freeing the allocated memory
+        in_addr dns_response = {0};
+        // Receiving the response from the EDNS0 server
+        if (recv(socket_fd, &dns_response, sizeof(in_addr_t), 0) == -1)
+          throw runtime_error("Packet receiving from EDNS0 server failed");
+        const string edge_server_ip = inet_ntoa(dns_response);
+        cout << "\nResponse from DNS server for request #" << request_number << " (" << resource << "): " << edge_server_ip << "\n";
         return EXIT_SUCCESS;
+      }
+    default:
+      {
+        // Parent process - STDIN ( Input from user, requests)
+        request_number++;
+        cout << request_number << ".Request a resource or q to quit: ";
+        cin >> resource;
+        if (resource == "q")
+        {
+          cout << "Quit.\n";
+          return EXIT_SUCCESS;
+        }
+        if (resource == "clear")
+          clear_screen();
+        break;
       }
     }
   }
