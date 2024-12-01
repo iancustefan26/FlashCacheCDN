@@ -4,49 +4,12 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string>
-#include <curl/curl.h>
 #include <netdb.h>
-#include <arpa/inet.h>
-#include <cstring>
+#include "requests.h"
 
 #define PORT 5053
 using namespace std;
 
-in_addr_t handle_request(const char* request, const size_t length)
-{
-  // Make a decision based on the resource requested ( first n - 4 bytes ), the geographical location of the client's IP
-  // address (last 4 bytes), the load of the edge-servers, and the cached content of them
-  cout << "Received packet size: " << length << "\n";
-  char resource[length - 4];
-  in_addr client_address;
-  memcpy(resource, request, length - 4);
-  cout << "Resource requested: " << request << "\n";
-  memcpy(&client_address, request + length - 4, 4);
-  cout << "Client's public IPv4 address: " << inet_ntoa(client_address) << "\n";
-  return client_address.s_addr; // Provizor
-  return 0; // Provizor
-}
-
-void respond_to_client(const int socket_fd)
-{
-  sockaddr_in client;
-  socklen_t len = sizeof(client);
-  const int client_fd = accept(socket_fd, (struct sockaddr *)&client, &len);
-  if (client_fd == -1)
-    throw runtime_error("accept() failed");
-  size_t packet_size;
-  if (recv(client_fd, &packet_size, sizeof(size_t), 0) == -1)
-    throw runtime_error("recv() failed");
-  char request[packet_size];
-  if (recv(client_fd, request, packet_size, 0) == -1)
-    throw runtime_error("recv() failed");
-  cout << "--------------------------\n";
-  const in_addr_t response = handle_request(request, packet_size);
-  cout << "--------------------------\n";
-  if (send(client_fd, &response, sizeof(in_addr_t), 0) == -1)
-    throw runtime_error("Sending response to client failed");
-  close(client_fd);
-}
 
 int main() {
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
