@@ -1,5 +1,6 @@
 /build/
 /ideas/
+/cmake-build-debug/
 
 CMakeCache.txt
 CMakeFiles/

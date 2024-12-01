@@ -8,6 +8,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <cstring>
+
+#define EDNS_PORT 5053
+
 using namespace std;
 
 
@@ -81,31 +84,32 @@ int main(int argc, char* argv[]) {
           throw runtime_error("socket for EDNS0 failed");
         sockaddr_in dns_server;
         dns_server.sin_family = AF_INET;
-        dns_server.sin_port = htons(5053);
+        dns_server.sin_port = htons(EDNS_PORT);
         dns_server.sin_addr.s_addr = inet_addr(argv[1]); // argv[1] = EDNS0's IP address
         if (connect(socket_fd, (sockaddr*)&dns_server, sizeof(dns_server)) < 0)
           throw runtime_error("connect to EDNS0 failed");
 
         // Creating the packet
-        const size_t dns_packet_length = 4 + resource.length() + 1 + sizeof(uint32_t); // length header + sender's public IPv4 (sizeof(uint32_t)) + request + NULL
-        const auto dns_packet = new unsigned char[dns_packet_length];
+        const size_t dns_packet_length = resource.length() + 1 + sizeof(in_addr_t); // length header + sender's public IPv4 (sizeof(uint32_t)) + request + NULL
+        const auto dns_packet = new unsigned char[dns_packet_length + sizeof(size_t)];
         const auto pub_ipv4n_addr = inet_addr(public_ip.c_str());
         memcpy(dns_packet, &dns_packet_length, sizeof(size_t));
         memcpy(dns_packet + sizeof(size_t), resource.c_str() , resource.length() + 1);
         memcpy(dns_packet + sizeof(size_t) + resource.length() + 1, &pub_ipv4n_addr, sizeof(in_addr_t));
 
         // Sending the packet to the EDNS0 server
-        if (send(socket_fd, dns_packet, dns_packet_length, 0) == -1)
+        if (send(socket_fd, dns_packet, dns_packet_length + sizeof(size_t), 0) == -1)
         {
-          throw runtime_error("Packet sending to EDNS0 server failed");
           close(socket_fd);
           delete[] dns_packet; // Freeing the allocated memory
+          throw runtime_error("Packet sending to EDNS0 server failed");
         }
         delete[] dns_packet; // Freeing the allocated memory
         in_addr dns_response = {0};
         // Receiving the response from the EDNS0 server
         if (recv(socket_fd, &dns_response, sizeof(in_addr_t), 0) == -1)
           throw runtime_error("Packet receiving from EDNS0 server failed");
+        close(socket_fd);
         const string edge_server_ip = inet_ntoa(dns_response);
         cout << "\nResponse from DNS server for request #" << request_number << " (" << resource << "): " << edge_server_ip << "\n";
         return EXIT_SUCCESS;
