@@ -31,6 +31,6 @@ inline void connect_to_edns0_server(const int& socket_fd, const char* dns_server
 }
 
 // Function that makes a DNS request through the main socket for the most convenient edge-server
-in_addr dns_request(int socket_fd, const string& resource, const string& public_ip);
+in_addr dns_get_request(int socket_fd, const string& resource, const string& public_ip);
 
 #endif

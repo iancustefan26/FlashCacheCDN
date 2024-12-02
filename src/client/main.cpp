@@ -33,7 +33,14 @@ int main(int argc, char* argv[]) {
       cout << "Quit.\n";
       return EXIT_SUCCESS;
     }
-    const in_addr edge_server_ip = dns_request(socket_fd, resource, public_ip);
+    const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
+    if (edge_server_ip.s_addr == 0)
+    {
+      // The EDNS0 Server's socket was closed gracefully
+      cout << "Request failed: DNS servet got shut down, try again later";
+      close(socket_fd);
+      return EXIT_SUCCESS;
+    }
     cout << "\nResponse from DNS server for request #" << request_number << " (" << resource << "): " << inet_ntoa(edge_server_ip)
         << "\n";
     // TODO: If a valid IP for an edge-server response is coming from the DNS server we will need to create a child process

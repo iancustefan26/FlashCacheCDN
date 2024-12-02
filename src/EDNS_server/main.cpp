@@ -12,6 +12,7 @@
 #define PORT 5053
 using namespace std;
 
+// TODO: renaming the variables
 
 int main() {
   fd_set readfds;

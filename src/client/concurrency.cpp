@@ -60,7 +60,7 @@ void child_work_send_edns0_request(const string& resource, const char* dns_serve
 }
 
 
-in_addr dns_request(int socket_fd, const string& resource, const string& public_ip)
+in_addr dns_get_request(int socket_fd, const string& resource, const string& public_ip)
 {
     // Creating the packet
     const size_t dns_packet_length = resource.length() + 1 + sizeof(in_addr_t);
