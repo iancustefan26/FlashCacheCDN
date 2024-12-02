@@ -3,7 +3,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string>
-#include <netdb.h>
+#include <sys/wait.h>
 #include "usable.h"
 #include "concurrency.h"
 
@@ -48,20 +48,26 @@ int main(int argc, char* argv[]) {
         }
         catch (exception& e)
         {
-          std::cerr << e.what() << "\n";
+          std::cerr << "Child process: " << e.what() << "\n";
           return EXIT_FAILURE;
         }
       }
     default:
       {
         // Parent process - STDIN ( Input from user, requests)
+        int exit_code;
+        wait(&exit_code);
+        if (exit_code != EXIT_SUCCESS) {
+          cerr << "Parent process: Connection failed! Exit Code: " << exit_code << "\n";
+          return EXIT_FAILURE;
+        }
         try
         {
           parent_work(request_number, resource);
         }
         catch (exception& e)
         {
-          std::cerr << e.what() << "\n";
+          cerr << e.what() << "\n";
           return EXIT_FAILURE;
         }
         break;

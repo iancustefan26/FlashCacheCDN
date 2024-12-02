@@ -29,7 +29,7 @@ void child_work_send_edns0_request(const string& resource, const char* dns_serve
     dns_server.sin_port = htons(EDNS_PORT);
     dns_server.sin_addr.s_addr = inet_addr(dns_server_ip); // argv[1] = EDNS0's IP address
     if (connect(socket_fd, (sockaddr*)&dns_server, sizeof(dns_server)) < 0)
-        throw runtime_error("connect to EDNS0 failed");
+        throw logic_error("connect to EDNS0 failed");
 
     // Creating the packet
     const size_t dns_packet_length = resource.length() + 1 + sizeof(in_addr_t);
