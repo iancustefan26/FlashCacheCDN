@@ -19,6 +19,7 @@ string get_public_ipv4()
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
     if (curl) {
+        curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         curl_easy_setopt(curl, CURLOPT_URL, "https://ifconfig.me");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, call_back);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &public_ip);
