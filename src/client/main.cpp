@@ -16,17 +16,28 @@ int main(int argc, char* argv[]) {
     cerr << "Usage: " << argv[0] << " <IP Address of DNS server>" << endl;
     return EXIT_SUCCESS;
   }
-  string resource;
-  const string public_ip = get_public_ipv4();
+  int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+  connect_to_edns0_server(socket_fd, argv[1]); // argv[1] = EDNS0's IP address
   int request_number = 1;
+  const string public_ip = get_public_ipv4();
+  string resource;
   cout << "Hello, Client! Welcome to my CDN!\n";
   cout << "Your public IPv4 Address: " << public_ip << "\n\n";
-  cout << "1.Request a resource or q to quit: ";
-  cin >> resource;
-  if (resource == "q")
+  while (true)
   {
-    cout << "Quit.\n";
-    return EXIT_SUCCESS;
+    cout << request_number << ".Request a resource or q to quit: ";
+    cin >> resource;
+    if (resource == "q")
+    {
+      close(socket_fd); // Closing the main socket (connection with the EDNS0 server)
+      cout << "Quit.\n";
+      return EXIT_SUCCESS;
+    }
+    const in_addr edge_server_ip = dns_request(socket_fd, resource, public_ip);
+    cout << "\nResponse from DNS server for request #" << request_number << " (" << resource << "): " << inet_ntoa(edge_server_ip)
+        << "\n";
+    // TODO: If a valid IP for an edge-server response is coming from the DNS server we will need to create a child process
+    // TODO: that will interact with the edge-server
   }
   while (true)
   {
