@@ -6,6 +6,8 @@
 #include <string>
 #include <netdb.h>
 #include <strings.h>
+#include <cstring>
+#include "cache.h"
 
 #include "requests.h"
 
@@ -15,10 +17,20 @@ using namespace std;
 // TODO: renaming the variables
 
 int main() {
-  fd_set readfds;
-  fd_set actfds;
+  // Creating the object that initializes the cached info about edge-servers (load, content, geolocation)
+  Cache* mapped_cached_content = new Cache();
+  pthread_t cache_pthread;
+  // Creating a thread that will handle the cached content on edge-servers and will provide
+  // info about their available info and load, it is accessible from other thread because
+  // they share the same HEAP
+  if (pthread_create(&cache_pthread, nullptr, Cache::update_mapping_entry_point, &mapped_cached_content))
+    throw runtime_error("Error creating handling cache thread");
+  // Creating the data structures that will handle multiplexing
+  fd_set read_fds;
+  fd_set active_fds;
   timeval tv = {0, 2};
-  int nfds = 2;
+  int number_of_fds = 2;
+  // Creating the actual main socket
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd == -1)
   {
@@ -37,18 +49,18 @@ int main() {
   cout << "EDNS0 server listening on IP: " << inet_ntoa(server.sin_addr) << " Port:" << PORT << "\n";
   if (listen(socket_fd, 5) == -1)
     throw runtime_error("listen() failed");
-  FD_ZERO (&actfds);		// Initializing the set of descriptors
-  FD_SET (socket_fd, &actfds);
-  nfds = socket_fd;
+  FD_ZERO (&active_fds);		// Initializing the set of descriptors
+  FD_SET (socket_fd, &active_fds);
+  number_of_fds = socket_fd;
   while (true)
   {
-    bcopy ((char *) &actfds, (char *) &readfds, sizeof (readfds)); // TODO: Not C like updating the set of descriptors
-    if (select (nfds+1, &readfds, nullptr, nullptr, &tv) < 0)
+    memcpy(&read_fds, &active_fds, sizeof(read_fds)); // Updating the set of descriptors
+    if (select (number_of_fds+1, &read_fds, nullptr, nullptr, &tv) < 0)
     {
       cerr << "select failed" << "\n";
       return EXIT_FAILURE;
     }
-    if (FD_ISSET (socket_fd, &readfds))
+    if (FD_ISSET (socket_fd, &read_fds))
     {
       // Creating client socket
       sockaddr_in client;
@@ -56,19 +68,18 @@ int main() {
       const int client_fd = accept(socket_fd, (sockaddr *)&client, &len);
       if (client_fd == -1)
         throw runtime_error("accept() failed");
-      FD_SET(client_fd, &actfds); // Adding the new client to the set
-      nfds = client_fd; // Updating the size of the set
+      FD_SET(client_fd, &active_fds); // Adding the new client to the set
+      number_of_fds = client_fd; // Updating the size of the set
     }
     try
     {
-      for (int c = 4; c <= nfds; c++) // 0,1,2 - I/O, 3 - main socket, 4.. - clients
-        if (FD_ISSET (c, &readfds)) // If there is actually any descriptor waiting for action (from the set of "active" descriptors)
-          respond_to_client(&actfds, c);
+      for (int client_fds = 4; client_fds <= number_of_fds; client_fds++) // 0,1,2 - I/O, 3 - main socket, 4.. - clients
+        if (FD_ISSET (client_fds, &read_fds)) // If there is actually any descriptor waiting for action (from the set of "active" descriptors)
+          respond_to_client(&active_fds, client_fds, mapped_cached_content);
     }
     catch (exception& e)
     {
       cerr << "Serving client failed: " << e.what() << "\n";
     }
   }
-  return 0;
 }

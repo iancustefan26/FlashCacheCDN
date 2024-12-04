@@ -18,6 +18,8 @@ add_executable(edge_server
 add_executable(EDNS_server
     src/EDNS_server/main.cpp
     src/EDNS_server/requests.cpp
+        src/EDNS_server/include/cache.h
+        src/EDNS_server/cache.cpp
 )
 
 
@@ -31,7 +33,9 @@ target_include_directories(edge_server PRIVATE src/edge_server/include)
 target_include_directories(server PRIVATE src/server/include)
 
 find_package(CURL REQUIRED)
-
 target_link_libraries(client PRIVATE CURL::libcurl)
+
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(EDNS_server PRIVATE nlohmann_json::nlohmann_json)
 
 

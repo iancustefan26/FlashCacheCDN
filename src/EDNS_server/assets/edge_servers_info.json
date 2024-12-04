@@ -1,0 +1,21 @@
+{
+  "81.32.11.113" : {
+    "name": "edge-server-1",
+    "load" : {
+      "cpu_load": [
+        0.22,
+        0.05,
+        0.02
+      ],
+      "memory_load": [
+        376.5,
+        900.0
+      ],
+      "disk_load": [
+        1600.2,
+        6384.6
+      ]
+  },
+    "resources" : ["resource1", "resource2"]
+  }
+}

@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
       // The EDNS0 Server's socket was closed gracefully
       cout << "Request failed: DNS servet got shut down, try again later";
       close(socket_fd);
+
       return EXIT_SUCCESS;
     }
     cout << "\nResponse from DNS server for request #" << request_number << " (" << resource << "): " << inet_ntoa(edge_server_ip)
