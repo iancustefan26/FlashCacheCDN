@@ -39,7 +39,7 @@ int main() {
   }
   sockaddr_in server;
   server.sin_family = AF_INET;
-  server.sin_addr.s_addr = INADDR_ANY;
+  server.sin_addr.s_addr = INADDR_ANY; // TODO: real IP
   server.sin_port = htons(PORT);
   // Setting REUSEADDR option to avoid bind() errors when restarting the server in a short period of time (the used port is still cached)
   if (bind(socket_fd, (sockaddr *)&server, sizeof(server)) == -1)

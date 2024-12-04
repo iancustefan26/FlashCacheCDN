@@ -3,7 +3,7 @@
 #define USABLE_H
 #include <string>
 #include <iostream>
-
+#include <curl/curl.h>
 
 using namespace std;
 
@@ -13,5 +13,6 @@ void clear_screen();
 
 string get_public_ipv4();
 
+string get_private_ipv4();
 
 #endif

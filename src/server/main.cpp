@@ -9,7 +9,6 @@ using namespace std;
 // TODO: Replace this with the actual IPv4 addresses
 #define PORT 3333
 #define EDGE_SERVER_PORT 2222
-#define EDGE_SERVER_ADDR "127.0.0.1"
 #define MAIN_SERVER_ADDR "127.0.0.1"
 #define N_OF_EDGES 5
 
@@ -27,7 +26,7 @@ int main() {
     throw runtime_error("bind() failed");
   if (listen(socket_sd, 5) == -1)
     throw runtime_error("listen() failed");
-  cout << "Server listening on IP:" << EDGE_SERVER_ADDR << " PORT: " << PORT << "\n";
+  cout << "Server listening on IP:" << MAIN_SERVER_ADDR << " PORT: " << PORT << "\n";
   // TODO: Preforking for serving edge-servers
 
   for (int i = 1; i <= N_OF_EDGES; i++)
