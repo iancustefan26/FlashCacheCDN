@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string>
+#include <thread>
 #include <netdb.h>
 #include <strings.h>
 #include <cstring>
@@ -15,16 +16,16 @@
 using namespace std;
 
 // TODO: renaming the variables
+// TODO: think about he improvements that can be done against DDoS attacks
 
 int main() {
   // Creating the object that initializes the cached info about edge-servers (load, content, geolocation)
   Cache* mapped_cached_content = new Cache();
-  pthread_t cache_pthread;
   // Creating a thread that will handle the cached content on edge-servers and will provide
   // info about their available info and load, it is accessible from other thread because
   // they share the same HEAP
-  if (pthread_create(&cache_pthread, nullptr, Cache::update_mapping_entry_point, &mapped_cached_content))
-    throw runtime_error("Error creating handling cache thread");
+  thread cache_thread(&Cache::update_mapping_entry_point, &mapped_cached_content);
+  cache_thread.detach();
   // Creating the data structures that will handle multiplexing
   fd_set read_fds;
   fd_set active_fds;

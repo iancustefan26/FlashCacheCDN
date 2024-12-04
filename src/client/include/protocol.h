@@ -28,4 +28,10 @@ inline void connect_to_server(const int& socket_fd, const char* server_ip, const
 // Function that makes a DNS request through the main socket for the most convenient edge-server
 in_addr dns_get_request(int socket_fd, const string& resource, const string& public_ip);
 
+// Asking for the resource to the edge-server using its socket
+void send_get_resource(int edge_server_sd, const string& request);
+
+// Wait for the resource-response from the edge-server
+string wait_for_response(int edge_server_sd);
+
 #endif

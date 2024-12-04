@@ -85,7 +85,6 @@ void Cache::update_mapping()
 
 void* Cache::update_mapping_entry_point(void* actual_object)
 {
-    pthread_detach(pthread_self());
     Cache* actual_cache = static_cast<Cache*>(actual_object);
     actual_cache->update_mapping();
 

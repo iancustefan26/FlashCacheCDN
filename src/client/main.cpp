@@ -81,6 +81,16 @@ int main(int argc, char* argv[]) {
           cerr << "To edge server: " << e.what() << "\n";
         }
         // TODO: implement the communication protocol between CLIENT-EDGE_SERVER
+        try
+        {
+          send_get_resource(edge_server_sd, resource);
+          const string response = wait_for_response(edge_server_sd);
+          cout << "Response from the edge-server with IP " << inet_ntoa(edge_server_ip) << ":\n" << response << "\n";
+        }
+        catch (const exception& e)
+        {
+          cerr << "Error when communicating with the edge-server: " << e.what() << "\n";
+        }
         close(edge_server_sd);
         return EXIT_SUCCESS;
       }

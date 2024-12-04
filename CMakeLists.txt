@@ -9,10 +9,14 @@ add_executable(client
     src/client/main.cpp
         src/client/protocol.cpp
     src/client/usable.cpp
+        src/edge_server/include/client_protocol.h
 )
 
 add_executable(edge_server
     src/edge_server/main.cpp
+        src/edge_server/client_protocol.cpp
+        src/edge_server/include/main_server_protocol.h
+        src/edge_server/main_server_protocol.cpp
 )
 
 add_executable(EDNS_server
