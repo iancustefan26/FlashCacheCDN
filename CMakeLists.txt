@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(client
     src/client/main.cpp
-    src/client/concurrency.cpp
+        src/client/protocol.cpp
     src/client/usable.cpp
 )
 

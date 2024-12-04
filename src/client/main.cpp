@@ -3,12 +3,15 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string>
-#include <sys/wait.h>
 #include "usable.h"
-#include "concurrency.h"
+#include "protocol.h"
+
+#define EDGE_SERVER_PORT 2222
+#define EDNS_PORT 5053
 
 using namespace std;
 
+// TODO: rename the descriptors from _fd to _sd (socket_descriptor) for all the code
 
 int main(int argc, char* argv[]) {
   if (argc != 2)
@@ -17,7 +20,7 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
   }
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-  connect_to_edns0_server(socket_fd, argv[1]); // argv[1] = EDNS0's IP address
+  connect_to_server(socket_fd, argv[1], EDNS_PORT); // argv[1] = EDNS0's IP address
   int request_number = 1;
   const string public_ip = get_public_ipv4();
   string resource;
@@ -33,6 +36,11 @@ int main(int argc, char* argv[]) {
       cout << "Quit.\n";
       return EXIT_SUCCESS;
     }
+    if (resource == "clear")
+    {
+      clear_screen();
+      continue;
+    }
     const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
     if (edge_server_ip.s_addr == 0)
     {
@@ -46,51 +54,42 @@ int main(int argc, char* argv[]) {
         << "\n";
     // TODO: If a valid IP for an edge-server response is coming from the DNS server we will need to create a child process
     // TODO: that will interact with the edge-server
-  }
-  while (true)
-  {
-    // Handling concurrent I/O operations
-    // The main process is handling INPUT operations and the child communicates with the EDNS0 server and
-    // establishes a connection with the received edge server trough TCP
     pid_t child_pid = fork();
     switch (child_pid)
     {
     case -1:
-      throw runtime_error("fork failed");
+      {
+        throw runtime_error("fork failed");
+        break;
+      }
     case 0:
       {
-        // Child process - STDOUT (Response from the DNS server)
-        // Sending requested resource to the EDNS0 server trough socket and waiting for a convenient CDN IP address
-        try
+        // The process that will interact with the edge server that dies when the requested resource is received
+        close(socket_fd);
+        int edge_server_sd = socket(AF_INET, SOCK_STREAM, 0);
+        if (edge_server_sd == -1)
         {
-          child_work_send_edns0_request(resource, argv[1], request_number, public_ip);
-        }
-        catch (exception& e)
-        {
-          std::cerr << "Child process: " << e.what() << "\n";
+          cerr << "Error opening edge server socket";
           return EXIT_FAILURE;
         }
+        try
+        {
+          connect_to_server(edge_server_sd, inet_ntoa(edge_server_ip), EDGE_SERVER_PORT);
+        }
+        catch (const logic_error& e)
+        {
+          cerr << "To edge server: " << e.what() << "\n";
+        }
+        // TODO: implement the communication protocol between CLIENT-EDGE_SERVER
+        close(edge_server_sd);
+        return EXIT_SUCCESS;
       }
     default:
       {
-        // Parent process - STDIN ( Input from user, requests)
-        int exit_code;
-        wait(&exit_code);
-        if (exit_code != EXIT_SUCCESS) {
-          cerr << "Parent process: Connection failed! Exit Code: " << exit_code << "\n";
-          return EXIT_FAILURE;
-        }
-        try
-        {
-          parent_work(request_number, resource);
-        }
-        catch (exception& e)
-        {
-          cerr << e.what() << "\n";
-          return EXIT_FAILURE;
-        }
-        break;
+        // The parent that will continue to handle the dns requests so the client can request more meanwhile
+        // the edge-server is computing client's request
       }
     }
   }
+
 }

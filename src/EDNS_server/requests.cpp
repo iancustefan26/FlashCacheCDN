@@ -22,7 +22,6 @@ in_addr_t handle_request(const char* request, const size_t length, Cache* mapped
 
 void respond_to_client(fd_set* active_fds, int client_fds, Cache* mapped_cached_content)
 {
-
     // Receiving the packet and parsing it
     size_t packet_size;
     size_t bytes_received = recv(client_fds, &packet_size, sizeof(size_t), 0);
@@ -47,7 +46,6 @@ void respond_to_client(fd_set* active_fds, int client_fds, Cache* mapped_cached_
         return;
     }
     cout << "--------------------------\n";
-
     // Make a decision based on available edge-server's caching, load and geolocation
     const in_addr_t response = handle_request(request, packet_size, mapped_cached_content);
     cout << "--------------------------\n";
