@@ -3,21 +3,22 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <usable.h>
 using namespace std;
 
 
 // TODO: Replace this with the actual IPv4 addresses
 #define PORT 3333
 #define EDGE_SERVER_PORT 2222
-#define MAIN_SERVER_ADDR "127.0.0.1"
 #define N_OF_EDGES 5
 
 
 int main() {
   // Setting up the server
+  string main_server_private_ip = get_private_ipv4();
   sockaddr_in main_server;
   main_server.sin_family = AF_INET;
-  main_server.sin_addr.s_addr = inet_addr(MAIN_SERVER_ADDR);
+  main_server.sin_addr.s_addr = inet_addr(main_server_private_ip.c_str());
   main_server.sin_port = htons(PORT);
   const int socket_sd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_sd == -1)
@@ -26,7 +27,7 @@ int main() {
     throw runtime_error("bind() failed");
   if (listen(socket_sd, 5) == -1)
     throw runtime_error("listen() failed");
-  cout << "Server listening on IP:" << MAIN_SERVER_ADDR << " PORT: " << PORT << "\n";
+  cout << "Server listening on IP:" << main_server_private_ip << " PORT: " << PORT << "\n";
   // TODO: Preforking for serving edge-servers
 
   for (int i = 1; i <= N_OF_EDGES; i++)
