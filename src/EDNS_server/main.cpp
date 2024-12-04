@@ -9,6 +9,7 @@
 #include <strings.h>
 #include <cstring>
 #include "cache.h"
+#include "usable.h"
 
 #include "requests.h"
 
@@ -32,6 +33,7 @@ int main() {
   timeval tv = {0, 2};
   int number_of_fds = 2;
   // Creating the actual main socket
+  string dns_ip = get_private_ipv4();
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd == -1)
   {
@@ -39,7 +41,7 @@ int main() {
   }
   sockaddr_in server;
   server.sin_family = AF_INET;
-  server.sin_addr.s_addr = INADDR_ANY; // TODO: real IP
+  server.sin_addr.s_addr = inet_addr(dns_ip.c_str()); // TODO: real IP
   server.sin_port = htons(PORT);
   // Setting REUSEADDR option to avoid bind() errors when restarting the server in a short period of time (the used port is still cached)
   if (bind(socket_fd, (sockaddr *)&server, sizeof(server)) == -1)
