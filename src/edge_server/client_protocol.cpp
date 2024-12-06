@@ -21,7 +21,7 @@ enum RequestType
     SEND
 };
 
-unsigned char* receive_packet(int socket_fd)
+char* receive_packet(int socket_fd)
 {
     size_t packet_size;
     size_t bytes_received = recv(socket_fd, &packet_size, sizeof(size_t),  0);
@@ -29,7 +29,7 @@ unsigned char* receive_packet(int socket_fd)
         throw logic_error("Receiving packet from client failed");
     if (bytes_received == 0)
         throw logic_error("Connection with the client was closed gracefully");
-    unsigned char *packet_buffer = new unsigned char[packet_size];
+    char *packet_buffer = new char[packet_size];
     bytes_received = recv(socket_fd, packet_buffer, packet_size - sizeof(size_t), 0);
     if (bytes_received == -1)
     {
@@ -45,7 +45,7 @@ unsigned char* receive_packet(int socket_fd)
     return packet_buffer;
 }
 
-RequestType parse_request(unsigned char *packet)
+RequestType parse_request(char *packet)
 {
     // TODO: parse different types of request
     return RequestType::EXEC;
@@ -66,7 +66,7 @@ void exec_script(char* packet, string* response)
         &response -> append(buffer);
 }
 
-string& compute_request(unsigned char *packet, RequestType request_type)
+string& compute_request(char *packet, RequestType request_type)
 {
     // TODO: make different types of behaviour based on the request type
     // TODO: but for now let's assume that the default is EXEC
@@ -75,8 +75,9 @@ string& compute_request(unsigned char *packet, RequestType request_type)
     // TODO: the server will receive the name of the script and will execute it
     // TODO: and send the response back to the client
     string* response = new string(); // allocate on the heap so the thread could access it
-    thread exec_thread(&exec_script, reinterpret_cast<char*>(packet), response);
-    exec_thread.join();
+    //thread exec_thread(&exec_script, reinterpret_cast<char*>(packet), response);
+    //exec_thread.join();
+    exec_script(packet, response);
     return *response;
 }
 
@@ -87,6 +88,7 @@ void send_response(int socket_fd, const string& response)
     memcpy(packet, &packet_size, sizeof(size_t));
     memcpy(packet + sizeof(size_t), response.c_str(), packet_size - sizeof(size_t));
     const size_t bytes_sent = send(socket_fd, packet, packet_size, 0);
+    cout << "Sent: " << response.c_str() << "\n";
     if (bytes_sent == -1)
         throw logic_error("Sending response to client failed");
     if (bytes_sent == 0)
@@ -97,10 +99,10 @@ void send_response(int socket_fd, const string& response)
 void treat_clients(int socket_fd)
 {
 
-    unsigned char* received_packet = receive_packet(socket_fd);
+    char* received_packet = receive_packet(socket_fd);
     const RequestType type_of_request = parse_request(received_packet);
     const string response = compute_request(received_packet, type_of_request);
     delete[] received_packet; // Freeing the memory
     send_response(socket_fd, response);
-    delete &response; // Freeing the allocated memory in the compute function
+    //delete &response; // Freeing the allocated memory in the compute function
 }
