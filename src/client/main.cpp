@@ -14,9 +14,9 @@ using namespace std;
 // TODO: rename the descriptors from _fd to _sd (socket_descriptor) for all the code
 
 int main(int argc, char* argv[]) {
-  if (argc != 2)
+  if (argc != 3)
   {
-    cerr << "Usage: " << argv[0] << " <IP Address of DNS server>" << endl;
+    cerr << "Usage: " << argv[0] << " <IP Address of DNS server> <Edge server IP>" << endl; // TODO: edge server ip prozivor arg
     return EXIT_SUCCESS;
   }
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);

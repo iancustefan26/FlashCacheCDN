@@ -61,7 +61,8 @@ int main(int argc, char *argv[]) {
         if (listen(socket_sd, 5) == -1)
           throw runtime_error("listen() failed");
         cout << "Edge server listening on IP: " << edge_server_private_ip << " PORT: " << PORT << "\n";
-        treat_clients(socket_sd);
+        int client_sd = accept(socket_sd, NULL, NULL);
+        treat_clients(client_sd);
         break;
       }
   }
