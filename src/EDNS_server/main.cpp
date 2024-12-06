@@ -30,7 +30,7 @@ int main() {
   // Creating the data structures that will handle multiplexing
   fd_set read_fds;
   fd_set active_fds;
-  timeval tv = {0, 2};
+  timeval tv;
   int number_of_fds = 2;
   // Creating the actual main socket
   string dns_ip = get_private_ipv4();
@@ -57,6 +57,10 @@ int main() {
   number_of_fds = socket_fd;
   while (true)
   {
+    // I have done a little bit of research with this timeval using a syscall trace
+    // and for whatever reason if I initialize it outside the loop
+    // it sets to {0, 0} after the first loop and it overloads the CPU
+    tv = {1, 0};
     memcpy(&read_fds, &active_fds, sizeof(read_fds)); // Updating the set of descriptors
     if (select (number_of_fds+1, &read_fds, nullptr, nullptr, &tv) < 0)
     {

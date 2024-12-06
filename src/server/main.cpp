@@ -36,7 +36,7 @@ int main() {
     int egde_sd = accept(socket_sd, (sockaddr*)&edge, (socklen_t*)&edge);
     if (egde_sd == -1)
       throw runtime_error("accept() failed");
-    cout << "Edge-server #" << i << " connected with IP: " << inet_ntoa(edge.sin_addr) << "\n";
+    cout << "Edge-server #" << i << " ---connected with IP: " << inet_ntoa(edge.sin_addr) << "\n";
   }
   return 0;
 }

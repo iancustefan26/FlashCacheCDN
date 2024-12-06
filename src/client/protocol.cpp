@@ -57,7 +57,7 @@ string wait_for_response(int edge_server_sd)
     if (received_bytes == 0)
         throw logic_error("Packet receiving from edge-server failed: Connection was closed gracefully");
     const char* response = new char[response_size + 1];
-    received_bytes = recv(edge_server_sd, &response, response_size, 0);
+    received_bytes = recv(edge_server_sd, &response, response_size - sizeof(size_t), 0);
     string return_response = response;
     delete[] response; // Freeing the memory
     if (received_bytes == -1)

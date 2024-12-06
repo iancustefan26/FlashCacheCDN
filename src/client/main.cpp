@@ -41,7 +41,12 @@ int main(int argc, char* argv[]) {
       clear_screen();
       continue;
     }
-    const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
+
+    // TODO: when i resolve the mapping edge-servers for the DNS it should retrieve a valid
+    // TODO: edge-server IP, for now i get it using argv[2]
+    // THE ORIGINAL ONE: const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
+    // PROVIZOR:
+    const in_addr edge_server_ip = {inet_addr(argv[2])}; // argv[2] = edge_server_ip
     if (edge_server_ip.s_addr == 0)
     {
       // The EDNS0 Server's socket was closed gracefully
@@ -60,7 +65,6 @@ int main(int argc, char* argv[]) {
     case -1:
       {
         throw runtime_error("fork failed");
-        break;
       }
     case 0:
       {
@@ -78,7 +82,7 @@ int main(int argc, char* argv[]) {
         }
         catch (const logic_error& e)
         {
-          cerr << "To edge server: " << e.what() << "\n";
+          cerr << "On the way to edge server: " << e.what() << "\n";
         }
         // TODO: implement the communication protocol between CLIENT-EDGE_SERVER
         try
@@ -96,7 +100,7 @@ int main(int argc, char* argv[]) {
       }
     default:
       {
-        // The parent that will continue to handle the dns requests so the client can request more meanwhile
+        // The parent that will continue to send the dns requests so the client can request more meanwhile
         // the edge-server is computing client's request
       }
     }
