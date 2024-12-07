@@ -26,9 +26,9 @@ int main(int argc, char* argv[]) {
   string resource;
   cout << "Hello, Client! Welcome to my CDN!\n";
   cout << "Your public IPv4 Address: " << public_ip << "\n\n";
+  cout << request_number << ".Request a resource or q to quit: ";
   while (true)
   {
-    cout << request_number << ".Request a resource or q to quit: ";
     cin >> resource;
     if (resource == "q")
     {
