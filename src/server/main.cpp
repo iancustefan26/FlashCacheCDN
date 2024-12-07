@@ -33,7 +33,8 @@ int main() {
   for (int i = 1; i <= N_OF_EDGES; i++)
   { // TODO: Provizor
     sockaddr_in edge;
-    int egde_sd = accept(socket_sd, (sockaddr*)&edge, (socklen_t*)&edge);
+    socklen_t len_edge = sizeof(edge);
+    int egde_sd = accept(socket_sd, (sockaddr*)&edge, &len_edge);
     if (egde_sd == -1)
       throw runtime_error("accept() failed");
     cout << "Edge-server #" << i << " connected with IP: " << inet_ntoa(edge.sin_addr) << "\n";

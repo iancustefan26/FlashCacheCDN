@@ -36,10 +36,11 @@ in_addr dns_get_request(int socket_fd, const string& resource, const string& pub
 void send_get_resource(int edge_server_sd, const string& resource)
 {
     // Creating the packet
-    const size_t packet_size = resource.length() + sizeof(size_t);
-    unsigned char* packet = new unsigned char[packet_size];
+    const size_t packet_size = resource.length() + sizeof(size_t) + 1;
+    char* packet = new char[packet_size];
     memcpy(packet, &packet_size, sizeof(size_t)); // Lenght header of the packet
-    memcpy(packet + sizeof(size_t), resource.c_str(), resource.length() + 1); // Adding the resource to the packet
+    memcpy(packet + sizeof(size_t), resource.c_str(),  packet_size - sizeof(size_t)); // Adding the resource to the packet
+    printf("Packet sent: %s\n", packet);
     size_t sent_bytes = send(edge_server_sd, packet, packet_size, 0);
     delete[] packet; // Freeing the memory
     if (sent_bytes == -1)

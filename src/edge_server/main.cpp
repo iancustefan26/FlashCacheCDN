@@ -61,9 +61,9 @@ int main(int argc, char *argv[]) {
         if (listen(socket_sd, 5) == -1)
           throw runtime_error("listen() failed");
         cout << "Edge server listening on IP: " << edge_server_private_ip << " PORT: " << PORT << "\n";
-        sockaddr_in client;
         while (true)
         {
+          sockaddr_in client;
           socklen_t addr_len = sizeof(client);
           int client_sd = accept(socket_sd, (struct sockaddr *)&client, &addr_len);
           cout << "Received connection from IP: " << inet_ntoa(client.sin_addr) << "\n";

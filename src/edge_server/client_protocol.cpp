@@ -55,12 +55,12 @@ void exec_script(char* packet, string* response)
 {
     char work_dir[128];
     getcwd(work_dir, 128);
-    unique_ptr<FILE, decltype(&pclose)> output(popen(packet, "r"), pclose);
+    const unique_ptr<FILE, decltype(&pclose)> output(popen(packet, "r"), pclose);
     fstream output_file;
     if (!output)
         throw logic_error("Failed to run script");
     char buffer[128];
-
+    buffer[0] = '\0';
     while (fgets(buffer, 128, output.get()) != nullptr)
         &response -> append(buffer);
 }
@@ -80,7 +80,7 @@ string compute_request(char *packet, RequestType request_type)
 
 void send_response(int socket_fd, const string& response)
 {
-    size_t packet_size = response.size() + sizeof(size_t);
+    size_t packet_size = response.size() + sizeof(size_t) + 1;
     char* packet = new char[packet_size];
     memcpy(packet, &packet_size, sizeof(size_t));
     memcpy(packet + sizeof(size_t), response.c_str(), packet_size - sizeof(size_t));
@@ -98,8 +98,10 @@ void treat_clients(int socket_fd)
     char* received_packet = receive_packet(socket_fd);
     cout << "Received: " << received_packet << " - ";
     const RequestType type_of_request = parse_request(received_packet);
-    const string response = compute_request(received_packet, type_of_request);
+    string response = compute_request(received_packet, type_of_request);
     delete[] received_packet; // Freeing the memory
+    if (response[0] == '\0')
+        response = "Resource not found.";
     send_response(socket_fd, response);
     cout << "Sent back: " << response.c_str() << "\n";
 }
