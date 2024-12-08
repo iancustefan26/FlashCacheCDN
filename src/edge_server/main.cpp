@@ -1,18 +1,22 @@
 #include <iostream>
+#include <thread>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include "client_protocol.h"
+#include "concurrency.h"
 #include "main_server_protocol.h"
 #include "usable.h"
 #include "../usable/usable.h"
+#include "concurrency.h"
 using namespace std;
 
 // TODO: Replace with real IP
 #define MAIN_SERVER_PORT 3333
 #define PORT 2222
+#define THREAD_COUNT 10 // TODO: for now this will be a constant number but it will more accurate in the future based on the number of clients
 
 
 int main(int argc, char *argv[]) {
@@ -61,6 +65,9 @@ int main(int argc, char *argv[]) {
         if (listen(socket_sd, 5) == -1)
           throw runtime_error("listen() failed");
         cout << "Edge server listening on IP: " << edge_server_private_ip << " PORT: " << PORT << "\n";
+        ThreadPool thread_pool(THREAD_COUNT, treat_clients, socket_sd);
+        thread_pool.join_all();
+        /*
         while (true)
         {
           sockaddr_in client;
@@ -69,6 +76,7 @@ int main(int argc, char *argv[]) {
           cout << "Received connection from IP: " << inet_ntoa(client.sin_addr) << "\n";
           treat_clients(client_sd);
         }
+        */
       }
   }
   return 0;

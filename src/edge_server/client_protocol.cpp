@@ -92,16 +92,34 @@ void send_response(int socket_fd, const string& response)
     delete[] packet;
 }
 
-void treat_clients(int socket_fd)
+void treat_clients(int socket_sd)
 {
+    while (true)
+    {
+        sockaddr_in client;
+        socklen_t addr_len = sizeof(client);
+        int client_sd = accept(socket_sd, ( sockaddr *)&client, &addr_len);
+        cout << "Received connection from IP: " << inet_ntoa(client.sin_addr) << "\n";
+        char* received_packet = receive_packet(client_sd);
+        cout << "Received: " << received_packet << " - ";
+        const RequestType type_of_request = parse_request(received_packet);
+        string response = compute_request(received_packet, type_of_request);
+        delete[] received_packet; // Freeing the memory
+        if (response[0] == '\0')
+            response = "Resource not found.";
+        send_response(client_sd, response);
+        close(client_sd);
+        cout << "Sent back: " << response.c_str() << "\n";
+    }
 
-    char* received_packet = receive_packet(socket_fd);
-    cout << "Received: " << received_packet << " - ";
-    const RequestType type_of_request = parse_request(received_packet);
-    string response = compute_request(received_packet, type_of_request);
-    delete[] received_packet; // Freeing the memory
-    if (response[0] == '\0')
-        response = "Resource not found.";
-    send_response(socket_fd, response);
-    cout << "Sent back: " << response.c_str() << "\n";
+    /*
+        while (true)
+        {
+          sockaddr_in client;
+          socklen_t addr_len = sizeof(client);
+          int client_sd = accept(socket_sd, (struct sockaddr *)&client, &addr_len);
+          cout << "Received connection from IP: " << inet_ntoa(client.sin_addr) << "\n";
+          treat_clients(client_sd);
+        }
+        */
 }

@@ -18,7 +18,9 @@ add_executable(edge_server
         src/edge_server/client_protocol.cpp
         src/edge_server/include/main_server_protocol.h
         src/edge_server/main_server_protocol.cpp
+        src/edge_server/include/concurrency.h
         src/usable/usable.cpp
+        src/edge_server/concurrency.cpp
 )
 
 add_executable(EDNS_server
