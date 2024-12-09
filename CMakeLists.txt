@@ -34,7 +34,11 @@ add_executable(EDNS_server
 
 add_executable(server
     src/server/main.cpp
+        src/server/include/edge_protocol.h
+        src/server/include/dns_server_protocol.h
         src/usable/usable.cpp
+        src/server/edge_protocol.cpp
+        src/server/dns_server_protocol.cpp
 )
 
 target_include_directories(client PRIVATE src/client/include src/usable)

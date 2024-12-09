@@ -59,7 +59,7 @@ int main() {
   {
     // I have done a little bit of research with this timeval using a syscall trace
     // and for whatever reason if I initialize it outside the loop
-    // it sets to {0, 0} after the first loop and it overloads the CPU
+    // it sets to {0, 0} after the first loop and it overloads the CPU by doing
     tv = {1, 0};
     memcpy(&read_fds, &active_fds, sizeof(read_fds)); // Updating the set of descriptors
     if (select (number_of_fds+1, &read_fds, nullptr, nullptr, &tv) < 0)
