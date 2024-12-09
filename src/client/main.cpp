@@ -45,8 +45,9 @@ int main(int argc, char* argv[]) {
     // TODO: when i resolve the mapping edge-servers for the DNS it should retrieve a valid
     // TODO: edge-server IP, for now i get it using argv[2]
     // THE ORIGINAL ONE: const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
+    const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
     // PROVIZOR:
-    const in_addr edge_server_ip = {inet_addr(argv[2])}; // argv[2] = edge_server_ip
+    //const in_addr edge_server_ip = {inet_addr(argv[2])}; // argv[2] = edge_server_ip
     if (edge_server_ip.s_addr == 0)
     {
       // The EDNS0 Server's socket was closed gracefully

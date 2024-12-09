@@ -56,7 +56,7 @@ void ThreadPool::lock_mutex() {
         accept_mtx.lock();
     }
     catch (const std::exception& e) {
-        std::cerr << "Mutex lock failed: " << e.what() << std::endl;
+        cerr << "Mutex lock failed: " << e.what() << std::endl;
         throw; // rethrow
     }
 }
@@ -66,7 +66,7 @@ void ThreadPool::unlock_mutex() {
         accept_mtx.unlock();
     }
     catch (const std::exception& e) {
-        std::cerr << "Mutex unlock failed: " << e.what() << std::endl;
+        cerr << "Mutex unlock failed: " << e.what() << std::endl;
         throw; // rethrow
     }
 }

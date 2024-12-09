@@ -55,18 +55,19 @@ class Edge_server
     float get_geo_distance_estimation_index(in_addr_t client_ip);
 
 public:
-    Edge_server(const Load& load, const in_addr_t ip_address, const string& name, const unordered_set<string>& resources); // Constructor
+    Edge_server(const Load& load, in_addr_t ip_address, const string& name, const unordered_set<string>& resources); // Constructor
 
     // Computing the final grade of the edge-server based on
     float compute_decide_grade(in_addr_t client_ip, const char* resource);
     string get_name() const;
+    in_addr_t get_ip() const;
 };
 
 class Cache
 {
     string main_server_ip;
     int number_of_edge_servers;
-    unordered_map<string, Edge_server> edge_servers;
+    vector<Edge_server> edge_servers; // Key : IP, Value: Edge_server
     void initialize(); // Initializing the cached data from the JSON config file
 public:
     Cache(const char* main_server_ip); // Will call initialize after allocating memory

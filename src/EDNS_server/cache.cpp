@@ -28,6 +28,12 @@ string Edge_server::get_name() const
     return this->name;
 }
 
+in_addr_t Edge_server::get_ip() const
+{
+    return ip_address;
+}
+
+
 float Edge_server::get_average_load() const
 {
     // The CPU load is the most important, then the RAM and then the Disk
@@ -43,8 +49,8 @@ float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
     // in an index reported to 100%
     // TODO: implementing the actual logic
 
-    std::mt19937 generator(std::random_device{}());
-    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    mt19937 generator(std::random_device{}());
+    uniform_real_distribution<float> distribution(0.0f, 1.0f);
 
     const float random_float = distribution(generator);
     return random_float;
@@ -53,10 +59,11 @@ float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
 
 float Edge_server::compute_decide_grade(in_addr_t client_ip, const char* resource)
 {
+    // A cache MISS but still the most convenient one
     if (resources.contains(resource) == false)
-        return get_geo_distance_estimation_index(client_ip) * 0.5f + get_average_load() * 0.25f + 0.0f / 3.0f;
+        return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.33f + 0.0f / 3.0f;
 
-    return get_geo_distance_estimation_index(client_ip) * 0.5f + get_average_load() * 0.25f + 100.0f / 3.0f;
+    return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.34f + 1.0f / 3.0f;
 }
 
 Cache::Cache(const char* main_server_ip)
@@ -70,7 +77,20 @@ Cache::Cache(const char* main_server_ip)
 
 void Cache::initialize()
 {
-
+    // There I make the JSON received from the main server full of info about the edge server
+    // and I will deserialize it into C++ objects and add them to the vector
+    edge_servers.push_back
+    (
+        Edge_server({
+            {0.15, 0.37, 0.40},
+            {1024, 240},
+            {5096, 1055}
+        },
+        inet_addr("10.176.86.169"),
+        "edge-server-1",
+        {"./test", "./test_5_seconds"}
+        )
+    );
 }
 
 void Cache::update_mapping()
@@ -82,7 +102,6 @@ void Cache::update_mapping()
     main_server.sin_family = AF_INET;
     main_server.sin_addr.s_addr = inet_addr(main_server_ip.c_str());
     main_server.sin_port = htons(MAIN_SERVER_PORT);
-    cout << "Trying to connect to server with IP: " << inet_ntoa(main_server.sin_addr) << " PORT: " << MAIN_SERVER_PORT << endl;
     if (connect(main_server_sd, (sockaddr *)&main_server, sizeof(sockaddr_in)) == -1)
         throw runtime_error("main_server_connect failed");
     cout << "Connected to the main server on PORT: " << MAIN_SERVER_PORT << "\n";
@@ -103,7 +122,27 @@ void* Cache::update_mapping_entry_point(void* actual_object)
 
 in_addr_t Cache::decide(const char* resource, in_addr_t client_ip)
 {
-    return client_ip;
+    // Based on client's IP address, resource requested and the load of the machines, make a decision
+    // The most important thing is first that the machine must have the resource cached
+    // Second, the edge-server should be near the client
+    // Third, the load should not be so high
+    // So, we will need to calculate an average based on (distance, load)
+    // Taking into acount that the distance is more important than the actual load
+    // We will compute the average like this : average = (distance * 0,67 + load * 0,33 ) / 2;
+
+    // IP - decide_index
+    Edge_server most_convenient_edge = edge_servers[0];
+    float most_convenient_index = edge_servers[0].compute_decide_grade(client_ip, resource);
+    for (auto& edge: edge_servers)
+    {
+        float decide_index = edge.compute_decide_grade(client_ip, resource);
+        if (decide_index > most_convenient_index)
+            most_convenient_edge = edge, most_convenient_index = decide_index;
+    }
+    cout << "Returned to EDNS0 server: IP: " << inet_ntoa({most_convenient_edge.get_ip()})
+         << " with decide index: " << most_convenient_index << "\n";
+
+    return most_convenient_edge.get_ip();
 }
 
 
