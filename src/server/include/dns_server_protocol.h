@@ -16,7 +16,12 @@ inline void handle_dns_info_transmission(int socket_sd)
     if (dns_sd == -1)
         throw runtime_error("accept() failed");
     cout << "Parent process with PID: " << getpid() << " handling info transmissions to EDNS0 server"
-         << " with IP: " << inet_ntoa(dns.sin_addr) << "\n";;
+         << " with IP: " << inet_ntoa(dns.sin_addr) << "\n";
+    while (true)
+    {
+        sleep(10);
+        cout << "Giving info about edge-servers to EDNS0 server...\n";
+    }
 }
 
 #endif

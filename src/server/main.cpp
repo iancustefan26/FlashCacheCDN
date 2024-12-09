@@ -10,9 +10,8 @@ using namespace std;
 
 
 // TODO: Replace this with the actual IPv4 addresses
-#define PORT_TO_EDGE 3333
-#define PORT_TO_DNS 6666
-#define EDGE_SERVER_PORT 2222
+#define PORT_FOR_EDGE 3333
+#define PORT_FOR_DNS 6666
 #define N_OF_EDGES 5
 
 
@@ -25,7 +24,7 @@ int main() {
   sockaddr_in main_server_for_edge;
   main_server_for_edge.sin_family = AF_INET;
   main_server_for_edge.sin_addr.s_addr = inet_addr(main_server_private_ip.c_str());
-  main_server_for_edge.sin_port = htons(PORT_TO_EDGE);
+  main_server_for_edge.sin_port = htons(PORT_FOR_EDGE);
   const int socket_edge_sd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_edge_sd == -1)
     throw runtime_error("socket() failed");
@@ -33,7 +32,7 @@ int main() {
     throw runtime_error("bind() failed");
   if (listen(socket_edge_sd, 5) == -1)
     throw runtime_error("listen() failed");
-  cout << "Server listening for edges on IP:" << main_server_private_ip << " PORT: " << PORT_TO_EDGE << "\n";
+  cout << "Server listening for edges on IP:" << inet_ntoa(main_server_for_edge.sin_addr) << " PORT: " << PORT_FOR_EDGE << "\n";
   int optval = 1;
   if (setsockopt(socket_edge_sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) < 0)
     throw runtime_error("setsockopt() failed");
@@ -43,15 +42,15 @@ int main() {
   sockaddr_in main_server_for_dns;
   main_server_for_dns.sin_family = AF_INET;
   main_server_for_dns.sin_addr.s_addr = inet_addr(main_server_private_ip.c_str());
-  main_server_for_dns.sin_port = htons(PORT_TO_DNS);
+  main_server_for_dns.sin_port = htons(PORT_FOR_DNS);
   const int socket_dns_sd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_dns_sd == -1)
     throw runtime_error("socket() failed");
   if (bind(socket_dns_sd, (struct sockaddr *)&main_server_for_dns, sizeof(struct sockaddr_in)) == -1)
     throw runtime_error("bind() failed");
-  if (listen(socket_dns_sd, 5) == -1)
+  if (listen(socket_dns_sd, 1) == -1)
     throw runtime_error("listen() failed");
-  cout << "Server listening for the EDNS0 server on IP:" << main_server_private_ip << " PORT: " << PORT_TO_DNS << "\n";
+  cout << "Server listening for the EDNS0 server on IP:" << inet_ntoa(main_server_for_dns.sin_addr) << " PORT: " << PORT_FOR_DNS << "\n";
   optval = 1;
   if (setsockopt(socket_dns_sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) < 0)
     throw runtime_error("setsockopt() failed");
@@ -94,5 +93,6 @@ int main() {
   handle_dns_info_transmission(socket_dns_sd); // infinite loop
 
   close(socket_dns_sd);
+
   return 0;
 }

@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <nlohmann/json.hpp>
 
+#define MAIN_SERVER_PORT 6666
 
 using namespace std;
 using namespace nlohmann;
@@ -63,11 +64,12 @@ public:
 
 class Cache
 {
+    string main_server_ip;
     int number_of_edge_servers;
     unordered_map<string, Edge_server> edge_servers;
     void initialize(); // Initializing the cached data from the JSON config file
 public:
-    Cache(); // Will call initialize after allocating memory
+    Cache(const char* main_server_ip); // Will call initialize after allocating memory
     void update_mapping();
 
     // It is needed in order for the thread to access the actual object's instance function

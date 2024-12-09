@@ -19,14 +19,18 @@ using namespace std;
 // TODO: renaming the variables
 // TODO: think about he improvements that can be done against DDoS attacks
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc != 2)
+  {
+    cout << "Usage: " << argv[0] << " <main_server_ip>" << endl;
+  }
   // Creating the object that initializes the cached info about edge-servers (load, content, geolocation)
-  Cache* mapped_cached_content = new Cache();
-  // Creating a thread that will handle the cached content on edge-servers and will provide
-  // info about their available info and load, it is accessible from other thread because
+  Cache* mapped_cached_content = new Cache(argv[1]);
+  // Creating a thread that will handle the cached content on edge-servers and will retrieve
+  // info about their available info and load from the main server; it is accessible from other thread because
   // they share the same HEAP
-  thread cache_thread(&Cache::update_mapping_entry_point, &mapped_cached_content);
-  cache_thread.detach();
+  thread cache_thread(&Cache::update_mapping_entry_point, mapped_cached_content);
+  cache_thread.detach(); // thread will run independently
   // Creating the data structures that will handle multiplexing
   fd_set read_fds;
   fd_set active_fds;
