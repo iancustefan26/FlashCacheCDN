@@ -1,10 +1,16 @@
+#pragma once
 #ifndef CACHE_H
 #define CACHE_H
 
 #include <string>
 #include <unordered_set>
-#include <netinet/in.h>
 #include <nlohmann/json.hpp>
+#include <random>
+#include <iostream>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+#include <err.h>
 
 #define MAIN_SERVER_PORT 6666
 

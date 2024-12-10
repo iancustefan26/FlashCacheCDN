@@ -1,8 +1,3 @@
-#include <iostream>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
 #include "utils.h"
 #include "dns_server_protocol.h"
 #include "edge_protocol.h"

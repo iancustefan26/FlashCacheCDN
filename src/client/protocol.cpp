@@ -1,9 +1,4 @@
 #include "protocol.h"
-#include <cstring>
-#include <iostream>
-#include <arpa/inet.h>
-#include <unistd.h>
-
 
 in_addr dns_get_request(int socket_fd, const string& resource, const string& public_ip)
 {

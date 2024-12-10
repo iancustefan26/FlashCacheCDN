@@ -2,11 +2,7 @@
 // All the comments are in english because I am planning to post this project on my GitHub, LinkedIn etc. pages
 // @2024 Iancu Stefan-Teodor - iancustefanteodor@gmail.com
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
 #include <string>
-#include <arpa/inet.h>
 #include "utils.h"
 #include "protocol.h"
 #include "configparser.hpp"

@@ -1,17 +1,9 @@
-#include <iostream>
-#include <thread>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <sys/wait.h>
 #include "client_protocol.h"
 #include "concurrency.h"
 #include "main_server_protocol.h"
 #include "utils.h"
-#include <fstream>
 #include "configparser.hpp"
-#include "concurrency.h"
+
 using namespace std;
 
 // TODO: Replace with real IP

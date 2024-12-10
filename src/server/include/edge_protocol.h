@@ -1,12 +1,10 @@
-
+#pragma once
 #ifndef EDGE_PROTOCOL_H
 #define EDGE_PROTOCOL_H
 #include <iostream>
 #include <arpa/inet.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "utils.h"
 
 using namespace std;
 

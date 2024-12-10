@@ -1,8 +1,6 @@
 #pragma once
 #ifndef REQUESTS_H
 #define REQUESTS_H
-#include <iostream>
-#include <netinet/in.h>
 
 #include "cache.h"
 

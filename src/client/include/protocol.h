@@ -5,8 +5,12 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include "utils.h"
+#include <cstring>
+#include <unistd.h>
+
 using namespace std;
 
 #define EDNS_PORT 5053

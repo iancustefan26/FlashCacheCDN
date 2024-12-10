@@ -1,10 +1,5 @@
 #include "cache.h"
 
-#include <random>
-#include <fstream>
-#include <iostream>
-#include <arpa/inet.h>
-
 float CPU::get_average_load() const
 {
     return this->last_1_minute + this->last_5_minutes + this->last_15_minutes / 3.0f * 100.0f;

@@ -1,8 +1,4 @@
 #include "requests.h"
-#include <unistd.h>
-#include <cstring>
-#include <err.h>
-#include <arpa/inet.h>
 #include "cache.h"
 
 in_addr_t handle_request(const char* request, const size_t length, Cache* mapped_cached_content)

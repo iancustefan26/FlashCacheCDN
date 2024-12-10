@@ -1,8 +1,15 @@
+#pragma once
 #ifndef CONCURRENCY_H
 #define CONCURRENCY_H
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
 using namespace std;
 
 struct thread_info

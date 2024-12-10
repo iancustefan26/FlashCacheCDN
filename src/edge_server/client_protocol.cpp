@@ -1,16 +1,5 @@
 #include "client_protocol.h"
 
-#include <cstring>
-#include <iostream>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <thread>
-#include <fstream>
-#include <sys/stat.h>
-
-#include "../client/include/protocol.h"
 using namespace std;
 
 char* receive_packet(int socket_fd)
