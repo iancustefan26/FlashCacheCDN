@@ -8,9 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(client
     src/client/main.cpp
         src/client/protocol.cpp
-        src/usable/usable.cpp
+        src/utils/utils.cpp
         src/edge_server/include/client_protocol.h
-        src/usable/usable.cpp
+        src/utils/utils.cpp
 )
 
 add_executable(edge_server
@@ -19,7 +19,7 @@ add_executable(edge_server
         src/edge_server/include/main_server_protocol.h
         src/edge_server/main_server_protocol.cpp
         src/edge_server/include/concurrency.h
-        src/usable/usable.cpp
+        src/utils/utils.cpp
         src/edge_server/concurrency.cpp
 )
 
@@ -28,7 +28,7 @@ add_executable(EDNS_server
     src/EDNS_server/requests.cpp
         src/EDNS_server/include/cache.h
         src/EDNS_server/cache.cpp
-        src/usable/usable.cpp
+        src/utils/utils.cpp
 )
 
 
@@ -36,21 +36,27 @@ add_executable(server
     src/server/main.cpp
         src/server/include/edge_protocol.h
         src/server/include/dns_server_protocol.h
-        src/usable/usable.cpp
+        src/utils/utils.cpp
         src/server/edge_protocol.cpp
         src/server/dns_server_protocol.cpp
 )
 
-target_include_directories(client PRIVATE src/client/include src/usable)
-target_include_directories(EDNS_server PRIVATE src/EDNS_server/include src/usable)
-target_include_directories(edge_server PRIVATE src/edge_server/include src/usable)
-target_include_directories(server PRIVATE src/server/include src/usable)
+
+target_include_directories(client PRIVATE src/client/include src/utils)
+target_include_directories(EDNS_server PRIVATE src/EDNS_server/include src/utils)
+target_include_directories(edge_server PRIVATE src/edge_server/include src/utils)
+target_include_directories(server PRIVATE src/server/include src/utils)
 
 find_package(CURL REQUIRED)
-target_link_libraries(client PRIVATE CURL::libcurl)
-target_link_libraries(edge_server PRIVATE CURL::libcurl)
-target_link_libraries(server PRIVATE CURL::libcurl)
-target_link_libraries(EDNS_server PRIVATE CURL::libcurl)
+find_library(configparser
+        NAME configparser
+        HINTS [${LIBDIR} ${INCLUDEDIR}]
+)
+
+target_link_libraries(client PRIVATE CURL::libcurl configparser)
+target_link_libraries(edge_server PRIVATE CURL::libcurl configparser)
+target_link_libraries(server PRIVATE CURL::libcurl configparser)
+target_link_libraries(EDNS_server PRIVATE CURL::libcurl configparser)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(EDNS_server PRIVATE nlohmann_json::nlohmann_json)

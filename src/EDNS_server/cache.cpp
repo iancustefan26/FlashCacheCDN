@@ -77,7 +77,7 @@ Cache::Cache(const char* main_server_ip)
 
 void Cache::initialize()
 {
-    // There I make the JSON received from the main server full of info about the edge server
+    // There I parse the JSON received from the main server full of info about the edge servers
     // and I will deserialize it into C++ objects and add them to the vector
     edge_servers.push_back
     (
@@ -129,6 +129,9 @@ in_addr_t Cache::decide(const char* resource, in_addr_t client_ip)
     // So, we will need to calculate an average based on (distance, load)
     // Taking into acount that the distance is more important than the actual load
     // We will compute the average like this : average = (distance * 0,67 + load * 0,33 ) / 2;
+    // Also, I am using floats even if I know that computations on floats are costly, but at a high scale
+    // a 0,1 plays a vital role
+    // And I think a double precision data structure will not be worth
 
     // IP - decide_index
     Edge_server most_convenient_edge = edge_servers[0];
@@ -139,8 +142,8 @@ in_addr_t Cache::decide(const char* resource, in_addr_t client_ip)
         if (decide_index > most_convenient_index)
             most_convenient_edge = edge, most_convenient_index = decide_index;
     }
-    cout << "Returned to EDNS0 server: IP: " << inet_ntoa({most_convenient_edge.get_ip()})
-         << " with decide index: " << most_convenient_index << "\n";
+    cout << "Returned to the client egde-server: IP: " << inet_ntoa({most_convenient_edge.get_ip()})
+         << "\nwith decide index: " << most_convenient_index << "\n";
 
     return most_convenient_edge.get_ip();
 }

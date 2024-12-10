@@ -9,7 +9,7 @@
 #include <strings.h>
 #include <cstring>
 #include "cache.h"
-#include "usable.h"
+#include "utils.h"
 
 #include "requests.h"
 
@@ -22,7 +22,8 @@ using namespace std;
 int main(int argc, char *argv[]) {
   if (argc != 2)
   {
-    cout << "Usage: " << argv[0] << " <main_server_ip>" << endl;
+    cout << "Usage: " << argv[0] << " <main_server_ip>\n" << endl;
+    return EXIT_SUCCESS;
   }
   // Creating the object that initializes the cached info about edge-servers (load, content, geolocation)
   Cache* mapped_cached_content = new Cache(argv[1]);

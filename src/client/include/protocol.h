@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
-#include "usable.h"
+#include "utils.h"
 using namespace std;
 
 #define EDNS_PORT 5053

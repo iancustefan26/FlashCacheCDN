@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <usable.h>
+#include "utils.h"
 
 inline void handle_dns_info_transmission(int socket_sd)
 {
@@ -19,6 +19,7 @@ inline void handle_dns_info_transmission(int socket_sd)
          << " with IP: " << inet_ntoa(dns.sin_addr) << "\n";
     while (true)
     {
+        // Provizor function
         sleep(10);
         cout << "Giving info about edge-servers to EDNS0 server...\n";
     }

@@ -1,26 +1,32 @@
 
+// All the comments are in english because I am planning to post this project on my GitHub, LinkedIn etc. pages
+// @2024 Iancu Stefan-Teodor - iancustefanteodor@gmail.com
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string>
-#include "usable.h"
+#include <arpa/inet.h>
+#include "utils.h"
 #include "protocol.h"
+#include "configparser.hpp"
 
 #define EDGE_SERVER_PORT 2222
 #define EDNS_PORT 5053
 
 using namespace std;
 
+const string config_path = "../src/client/config/resolv.ini";
 // TODO: rename the descriptors from _fd to _sd (socket_descriptor) for all the code
 
 int main(int argc, char* argv[]) {
-  if (argc != 3)
-  {
-    cerr << "Usage: " << argv[0] << " <IP Address of DNS server> <Edge server IP>" << endl; // TODO: edge server ip prozivor arg
-    return EXIT_SUCCESS;
-  }
+  // Initializing the settings from the config file
+  // see config setter bash script
+  ConfigParser parser = ConfigParser(config_path);
+  string dns_ip = parser.aConfig<string>("dns", "nameserver");
+
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-  connect_to_server(socket_fd, argv[1], EDNS_PORT); // argv[1] = EDNS0's IP address
+  connect_to_server(socket_fd, dns_ip.c_str(), EDNS_PORT); // argv[1] = EDNS0's IP address
   int request_number = 1;
   const string public_ip = get_public_ipv4();
   string resource;
@@ -41,13 +47,7 @@ int main(int argc, char* argv[]) {
       clear_screen();
       continue;
     }
-
-    // TODO: when i resolve the mapping edge-servers for the DNS it should retrieve a valid
-    // TODO: edge-server IP, for now i get it using argv[2]
-    // THE ORIGINAL ONE: const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
     const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
-    // PROVIZOR:
-    //const in_addr edge_server_ip = {inet_addr(argv[2])}; // argv[2] = edge_server_ip
     if (edge_server_ip.s_addr == 0)
     {
       // The EDNS0 Server's socket was closed gracefully

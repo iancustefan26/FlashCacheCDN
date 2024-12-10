@@ -111,15 +111,4 @@ void treat_clients(int socket_sd)
         close(client_sd);
         cout << "Sent back: " << response.c_str() << "\n";
     }
-
-    /*
-        while (true)
-        {
-          sockaddr_in client;
-          socklen_t addr_len = sizeof(client);
-          int client_sd = accept(socket_sd, (struct sockaddr *)&client, &addr_len);
-          cout << "Received connection from IP: " << inet_ntoa(client.sin_addr) << "\n";
-          treat_clients(client_sd);
-        }
-        */
 }
