@@ -13,14 +13,6 @@
 #include "../client/include/protocol.h"
 using namespace std;
 
-
-// TODO: organize the code in the header
-enum RequestType
-{
-    EXEC,
-    SEND
-};
-
 char* receive_packet(int socket_fd)
 {
     size_t packet_size;
@@ -48,6 +40,7 @@ char* receive_packet(int socket_fd)
 RequestType parse_request(char *packet)
 {
     // TODO: parse different types of request
+    // Future features
     return RequestType::EXEC;
 }
 
@@ -55,7 +48,10 @@ void exec_script(char* packet, string* response)
 {
     char work_dir[128];
     getcwd(work_dir, 128);
-    const unique_ptr<FILE, decltype(&pclose)> output(popen(packet, "r"), pclose);
+    // A more C++ like style to make an auto-destructible pointer with popen function
+    // using unique_ptr and lambda functions
+    const unique_ptr<FILE, void(*)(FILE*)> output(popen(packet, "r"), [](FILE* file) { pclose(file); });
+
     fstream output_file;
     if (!output)
         throw logic_error("Failed to run script");
@@ -67,12 +63,10 @@ void exec_script(char* packet, string* response)
 
 string compute_request(char *packet, RequestType request_type)
 {
+    // TODO: Future features
     // TODO: make different types of behaviour based on the request type
     // TODO: but for now let's assume that the default is EXEC
-    // TODO: (the server will execute a script and send back the response)
-
-    // TODO: the server will receive the name of the script and will execute it
-    // TODO: and send the response back to the client
+    // TODO: (the edge-server will execute a script and send back the response to the client)
     string response;
     exec_script(packet, &response);
     return response;

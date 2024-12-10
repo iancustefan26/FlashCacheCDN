@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     const in_addr edge_server_ip = dns_get_request(socket_fd, resource, public_ip);
     if (edge_server_ip.s_addr == 0)
     {
-      // The EDNS0 Server's socket was closed gracefully
+      // EDNS0 Server's socket was closed gracefully
       cout << "Request failed: DNS servet got shut down, try again later";
       close(socket_fd);
 
@@ -58,8 +58,10 @@ int main(int argc, char* argv[]) {
     }
     cout << "\nResponse from DNS server for request #" << request_number << " (" << resource << "): " << inet_ntoa(edge_server_ip)
         << "\n";
-    // TODO: If a valid IP for an edge-server response is coming from the DNS server we will need to create a child process
-    // TODO: that will interact with the edge-server
+    // If a valid IP for an edge-server response is coming from the DNS server we will need to create a child process
+    // that will interact with the edge-server so we can send another request while
+    // the edge-server computes the output
+
     pid_t child_pid = fork();
     switch (child_pid)
     {
@@ -69,9 +71,9 @@ int main(int argc, char* argv[]) {
       }
     case 0:
       {
-        // The process that will interact with the edge server that dies when the requested resource is received
+        // The process that will interact with the edge-server that dies when the requested resource is received
         close(socket_fd);
-        int edge_server_sd = socket(AF_INET, SOCK_STREAM, 0);
+        const int edge_server_sd = socket(AF_INET, SOCK_STREAM, 0);
         if (edge_server_sd == -1)
         {
           cerr << "Error opening edge server socket";
@@ -83,9 +85,8 @@ int main(int argc, char* argv[]) {
         }
         catch (const logic_error& e)
         {
-          cerr << "On the way to edge server: " << e.what() << "\n";
+          cerr << "Error sending the request: " << e.what() << "\n";
         }
-        // TODO: implement the communication protocol between CLIENT-EDGE_SERVER
         try
         {
           send_get_resource(edge_server_sd, resource);

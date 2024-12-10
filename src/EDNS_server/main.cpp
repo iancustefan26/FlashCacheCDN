@@ -17,7 +17,7 @@
 using namespace std;
 
 // TODO: renaming the variables
-// TODO: think about he improvements that can be done against DDoS attacks
+// TODO: think about he improvements that can be done against DoS or DDoS attacks
 
 int main(int argc, char *argv[]) {
   if (argc != 2)
@@ -27,16 +27,19 @@ int main(int argc, char *argv[]) {
   }
   // Creating the object that initializes the cached info about edge-servers (load, content, geolocation)
   Cache* mapped_cached_content = new Cache(argv[1]);
+
   // Creating a thread that will handle the cached content on edge-servers and will retrieve
-  // info about their available info and load from the main server; it is accessible from other thread because
-  // they share the same HEAP
+  // info about their available resources and load from the main server; it is accessible from other threads because
+  // they share the same HEAP memory
   thread cache_thread(&Cache::update_mapping_entry_point, mapped_cached_content);
   cache_thread.detach(); // thread will run independently
-  // Creating the data structures that will handle multiplexing
+
+  // Creating the needed data structures for handling multiplexing
   fd_set read_fds;
   fd_set active_fds;
   timeval tv;
   int number_of_fds = 2;
+
   // Creating the actual main socket
   string dns_ip = get_private_ipv4();
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -48,9 +51,10 @@ int main(int argc, char *argv[]) {
   server.sin_family = AF_INET;
   server.sin_addr.s_addr = inet_addr(dns_ip.c_str()); // TODO: real IP
   server.sin_port = htons(PORT);
-  // Setting REUSEADDR option to avoid bind() errors when restarting the server in a short period of time (the used port is still cached)
   if (bind(socket_fd, (sockaddr *)&server, sizeof(server)) == -1)
     throw runtime_error("bind() failed");
+
+  // Setting REUSEADDR option to avoid bind() errors when restarting the server in a short period of time (the used port is still cached)
   constexpr int optval = 1;
   if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) < 0)
     throw runtime_error("setsockopt() failed");
@@ -65,6 +69,7 @@ int main(int argc, char *argv[]) {
     // I have done a little bit of research with this timeval using a syscall trace
     // and for whatever reason if I initialize it outside the loop
     // it sets to {0, 0} after the first loop and it overloads the CPU by doing
+    // TODO: improvements on setting this timeval value based on the amount of requests
     tv = {1, 0};
     memcpy(&read_fds, &active_fds, sizeof(read_fds)); // Updating the set of descriptors
     if (select (number_of_fds+1, &read_fds, nullptr, nullptr, &tv) < 0)
@@ -72,7 +77,7 @@ int main(int argc, char *argv[]) {
       cerr << "select failed" << "\n";
       return EXIT_FAILURE;
     }
-    if (FD_ISSET (socket_fd, &read_fds))
+    if (FD_ISSET (socket_fd, &read_fds)) // If there is a client that requested something
     {
       // Creating client socket
       sockaddr_in client;

@@ -1,6 +1,7 @@
 #include "requests.h"
 #include <unistd.h>
 #include <cstring>
+#include <err.h>
 #include <arpa/inet.h>
 #include "cache.h"
 
@@ -35,7 +36,7 @@ void respond_to_client(fd_set* active_fds, int client_fds, Cache* mapped_cached_
         return;
     }
     char request[packet_size];
-    bytes_received = recv(client_fds, request, packet_size, 0);
+    bytes_received = recv(client_fds, request, packet_size - sizeof(size_t), 0);
     if (bytes_received == -1)
         throw runtime_error("recv() failed");
     if (bytes_received == 0)
@@ -50,6 +51,10 @@ void respond_to_client(fd_set* active_fds, int client_fds, Cache* mapped_cached_
     const in_addr_t response = handle_request(request, packet_size, mapped_cached_content);
     cout << "--------------------------\n";
     // And send the edge-server's IP address back to the client
-    if (send(client_fds, &response, sizeof(in_addr_t), 0) == -1)
+    size_t bytes_sent = send(client_fds, &response, sizeof(in_addr_t), 0);
+    if (bytes_sent == -1)
         throw runtime_error("Sending response to client failed");
+    if (bytes_sent == 0)
+        throw logic_error("The connection was closed gracefully");
+
 }

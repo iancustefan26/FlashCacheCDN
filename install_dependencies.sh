@@ -11,5 +11,5 @@ cd configparser
 cmake .
 make
 make test
-make install
+sudo make install
 sudo apt install nlohmann-json3-dev

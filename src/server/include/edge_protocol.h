@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include "utils.h"
 
+using namespace std;
+
 inline void  handle_edge_server(int index, int socket_sd)
 {
     sockaddr_in edge;

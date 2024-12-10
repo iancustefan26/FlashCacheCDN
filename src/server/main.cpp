@@ -20,7 +20,6 @@ int main() {
   string main_server_private_ip = get_private_ipv4();
 
   // Creating the socket that will listen for edge-servers
-
   sockaddr_in main_server_for_edge;
   main_server_for_edge.sin_family = AF_INET;
   main_server_for_edge.sin_addr.s_addr = inet_addr(main_server_private_ip.c_str());
@@ -55,18 +54,9 @@ int main() {
   if (setsockopt(socket_dns_sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)) < 0)
     throw runtime_error("setsockopt() failed");
 
-  // TODO: Preforking for serving edge-servers
-  bool closed = false; // Used for closing the socket for edge_serves
+  // Preforking for serving edge-servers
   for (int i = 1; i <= N_OF_EDGES; i++)
-  { // TODO: Provizor
-    /*
-    sockaddr_in edge;
-    socklen_t len_edge = sizeof(edge);
-    int egde_sd = accept(socket_sd, (sockaddr*)&edge, &len_edge);
-    if (egde_sd == -1)
-      throw runtime_error("accept() failed");
-    cout << "Edge-server #" << i << " connected with IP: " << inet_ntoa(edge.sin_addr) << "\n";
-    */
+  {
     pid_t edge_server_pid = fork();
     switch (edge_server_pid)
     {
@@ -82,13 +72,13 @@ int main() {
           close(socket_edge_sd);
           return 0;
     default:
-        // (THIS PROCESS WILL "TAKE PLACE" OUTSIDE THE FOR LOOP (AFTER THE PROCESS POOL CREATION) )
+        // (THIS PROCESS WILL "TAKE PLACE" OUTSIDE THE FOR LOOP (AFTER THE PROCESS POOL CREATION))
         // The parent process that will communicate with the EDNS0 server and will
-        // send the info about all the edge-servers in order to keep mapped this information
-        // so he will know what edge-server will pick for the next requests
+        // send the info about all the edge-servers
           break;
     }
   }
+  // After creating the process pool, it's time to handle the connection with the DNS server
   close(socket_edge_sd); // Closing the socket that will be used to transfer data to edge-servers
   handle_dns_info_transmission(socket_dns_sd); // infinite loop
 

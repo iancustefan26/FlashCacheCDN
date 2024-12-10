@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include "utils.h"
 
+using namespace std;
+
 inline void handle_dns_info_transmission(int socket_sd)
 {
     sockaddr_in dns;

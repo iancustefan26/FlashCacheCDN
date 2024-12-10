@@ -5,10 +5,9 @@ mutex ThreadPool::accept_mtx;
 ThreadPool::ThreadPool(int size, void (*universal_work_function)(int), int main_socket)
 {
     this->size = size;
-    threads.resize(size); // Use resize to initialize each thread_info object
+    threads.resize(size);
 
     for (int i = 0; i < size; i++) {
-        // Initialize thread properly
         threads[i].thread_obj = thread(universal_work_function, main_socket);
         threads[i].active = true;
         threads[i].id = threads[i].thread_obj.get_id();

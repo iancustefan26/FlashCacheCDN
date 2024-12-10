@@ -17,7 +17,11 @@ class ThreadPool
     int size;
     int active;
     vector<thread_info> threads;
-    static mutex accept_mtx; // Not initialized in the constructor because it is default constructable (when declared), static because all threads should have acces
+
+    // Not initialized in the constructor because it is default constructable
+    // (when declared), static because all threads should have access
+    static mutex accept_mtx;
+
 public:
     ThreadPool(int size, void (*universal_work_function)(int), int main_socket);
     void join_all();

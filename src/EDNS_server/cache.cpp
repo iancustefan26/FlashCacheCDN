@@ -36,11 +36,11 @@ in_addr_t Edge_server::get_ip() const
 
 float Edge_server::get_average_load() const
 {
-    // The CPU load is the most important, then the RAM and then the Disk
+    // The CPU load is the most important, then the RAM and then the Disk /*Provizor*/
     return 0.55f * load.cpu_load.get_average_load()
     + 0.35f * load.memory_load.get_average_load()
     + 0.1f * load.disk_load.get_average_load()
-    / 3.0f;
+    ;
 }
 
 float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
@@ -49,6 +49,7 @@ float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
     // in an index reported to 100%
     // TODO: implementing the actual logic
 
+    /*Provizor*/
     mt19937 generator(std::random_device{}());
     uniform_real_distribution<float> distribution(0.0f, 1.0f);
 
@@ -61,17 +62,18 @@ float Edge_server::compute_decide_grade(in_addr_t client_ip, const char* resourc
 {
     // A cache MISS but still the most convenient one
     if (resources.contains(resource) == false)
-        return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.33f + 0.0f / 3.0f;
+        return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.33f + 0.0f;
 
-    return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.34f + 1.0f / 3.0f;
+    return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.33f + 1.0f;
 }
 
 Cache::Cache(const char* main_server_ip)
 {
     this -> main_server_ip = main_server_ip;
-    number_of_edge_servers = 5; // TODO: receive the actual number of edge servers from the main server through a socket
+    number_of_edge_servers = 5; // TODO: receive the actual number of edge servers from the main server through a socket or from a config file
     edge_servers.reserve(number_of_edge_servers);
-    // Implement the deserialization of the JSON file and intialize the members
+
+    // Implement the deserialization of the JSON file and initialize the members
     this->initialize();
 }
 
@@ -79,6 +81,7 @@ void Cache::initialize()
 {
     // There I parse the JSON received from the main server full of info about the edge servers
     // and I will deserialize it into C++ objects and add them to the vector
+    // Example:
     edge_servers.push_back
     (
         Edge_server({
@@ -107,6 +110,7 @@ void Cache::update_mapping()
     cout << "Connected to the main server on PORT: " << MAIN_SERVER_PORT << "\n";
     for (int i = 0; i < 100; i++)
     {
+        /*Provizor infinite loop*/
         sleep(5);
         cout << "Updating cache info from JSON file...\n";
     }
@@ -124,16 +128,16 @@ in_addr_t Cache::decide(const char* resource, in_addr_t client_ip)
 {
     // Based on client's IP address, resource requested and the load of the machines, make a decision
     // The most important thing is first that the machine must have the resource cached
-    // Second, the edge-server should be near the client
-    // Third, the load should not be so high
-    // So, we will need to calculate an average based on (distance, load)
-    // Taking into acount that the distance is more important than the actual load
-    // We will compute the average like this : average = (distance * 0,67 + load * 0,33 ) / 2;
+    // Second, the edge-server should be near the client (geolocation position)
+    // Third, the load should not be that high
+    // So, we will need to calculate an index based on (distance, load)
+    // Taking into account that the distance is more important than the actual load
+    // in order for latency to be the lowest possible
+    // We will compute the index like this : index = distance * 0,67 + load * 0,33
     // Also, I am using floats even if I know that computations on floats are costly, but at a high scale
     // a 0,1 plays a vital role
     // And I think a double precision data structure will not be worth
 
-    // IP - decide_index
     Edge_server most_convenient_edge = edge_servers[0];
     float most_convenient_index = edge_servers[0].compute_decide_grade(client_ip, resource);
     for (auto& edge: edge_servers)
