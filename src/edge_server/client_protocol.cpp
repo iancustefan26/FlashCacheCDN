@@ -1,4 +1,5 @@
 #include "client_protocol.h"
+#include "concurrency.h"
 
 using namespace std;
 
@@ -81,7 +82,9 @@ void treat_clients(int socket_sd)
     {
         sockaddr_in client;
         socklen_t addr_len = sizeof(client);
+        ThreadPool::accept_mtx.lock();
         int client_sd = accept(socket_sd, ( sockaddr *)&client, &addr_len);
+        ThreadPool::accept_mtx.unlock();
         cout << "Received connection from IP: " << inet_ntoa(client.sin_addr) << "\n";
         char* received_packet = receive_packet(client_sd);
         cout << "Received: " << received_packet << " - ";

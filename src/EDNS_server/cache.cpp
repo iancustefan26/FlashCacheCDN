@@ -84,7 +84,7 @@ void Cache::initialize()
             {1024, 240},
             {5096, 1055}
         },
-        inet_addr("10.176.86.169"),
+        inet_addr("10.176.86.215"),
         "edge-server-1",
         {"./test", "./test_5_seconds"}
         )

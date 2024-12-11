@@ -1,6 +1,6 @@
 {
-  "10.126.86.169" : {
-    "name": "edge-server-1",
+  "10.126.86.215" : {
+    "name": "edge-server-3",
     "load" : {
       "cpu_load": [
         0.22,
