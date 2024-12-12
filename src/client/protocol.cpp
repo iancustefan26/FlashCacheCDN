@@ -44,7 +44,6 @@ void send_get_resource(int edge_server_sd, const string& resource)
     char* packet = new char[packet_size];
     memcpy(packet, &packet_size, sizeof(size_t)); // Lenght header of the packet
     memcpy(packet + sizeof(size_t), resource.c_str(),  packet_size - sizeof(size_t)); // Adding the resource to the packet
-    printf("Packet sent: %s\n", packet);
     size_t sent_bytes = send(edge_server_sd, packet, packet_size, 0);
     delete[] packet; // Freeing the memory
     if (sent_bytes == -1)
