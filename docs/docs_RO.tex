@@ -1,0 +1,193 @@
+\documentclass[runningheads]{llncs}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{hyperref} 
+\usepackage{float}
+
+
+\begin{document}
+
+\title{mySCDN - FlashCacheCDN}
+\author{Iancu Stefan-Teodor}
+\institute{Facultatea de Informatică, Universitatea Alexandru Ioan Cuza Iasi, Romania}
+\maketitle
+
+\section{Introducere}
+\subsection{Viziune generala}
+Se propune realizarea unui sistem tip CDN (Content Delivery Network) prin care se doreste posibilitatea de a furniza un serviciu sau de a transfera date cat mai rapid. Latenta comunicarii va fi cat se poate de scazuta, iar utilizatorul va avea parte de o experienta buna cu aplicatia. Odata cu aceasta, imi propun ca realizarea acestui proiect ( achizitia hardware-ului, a serviciilor de deployment etc. ce vor putea face posibila existenta intregului sistem ) sa genereze costuri minime si sa ofere un serviciu software de calitate. Solutia proiectului propune distributia mai multor noduri in locatii geografice diferite  care vor putea servi clientii in mod optimizat.
+
+\subsection{Obiective}
+Proiectul isi propune urmatoarele obiective:
+\begin{itemize}
+    \item Se pune pe primul loc experienta clientului.
+    \item Alocarea celui mai convenabil nod pentru fiecare client in parte.
+    \item Evitarea riscului de a compromite tot serviciul si aplicatia, avand mereu o varianta de backup (in caz ca un nod va avea parte de crash, folosim alt nod ce va overi un serviciul cu o latenta pertinenta clientului).
+    \item Gestionarea concurentei in mod cat mai fiabil.
+    \item Optimizarea software-ului pentru a solicita cat mai putin CPU.
+    \item Optimizarea in timp a sistemului de caching, cat si a resurselor generate de concurenta.
+    \item Evitarea cazurilor nepevazute si tratarea erorilor.
+\end{itemize}
+
+\section{Tehnologii Aplicate}
+\begin{itemize}
+    \item La nivelul transport, proiectul se va folosi de protocolul TCP in intregul sistem. Chit ca este mai costisitor din punct de vedere al dimensiunii pachetului si al timpului de transmisie al unui schimb de mesaje valid, aduce certitudinea ca niciun pachet nu se va pierde sau va fi corupt (prin mijloace interne). Proiectul nu isi permite, spre exemplu, alocarea eronata a unui nod din America pentru un client din Madagascar prin coruperea a 3 bytes a unui pachet ce contine adresa IPv4 a nodului.
+    
+    \item Pentru a stoca informatii despre cache-ul disponibil pe fiecare nod proiectul se va folosi de formatul JSON pentru a putea deserializa continutul in obiecte stocate in memorie. Fisierele de configurare a serverelor si a clientului vor fi de tip \texttt{.ini} pentru ca sunt lightweight (la fel si API-ul) si usor de parsat. In consecinta, am folosit doua API-uri open-source pentru limbajul C++ ce se vor gasi in notele bibliografice.
+
+    \item Arhitectura este proiectata pentru sisteme Unix-based. La nivelul comunicarii in retea m-am folosit de bibliotecile standard din C/C++
+    pentru Unix sockets.
+
+    \item Din punct de vedere al concurentei, serverele vor implementa multithreading, multiprocessing si multiplexing in functie de caz, asa ca am folosit biibliotecile standard \texttt{<thread>} din C++ si \texttt{<unistd.h>} din C pentru a le gestiona.
+    
+    \item Se vor utliza structurile de date oferite de biblioteca standard din C++ si paradigma OOP pentru a realiza logica aplicatiei. 
+    
+    \item Cmake si bash scripts pentru build usor si instalarea dependintelor. 
+
+\end{itemize}
+
+\section{Structura Aplicației}
+Arhitectura aplicatiei se va baza pe 4 entitati: 
+- Main server 
+- Edge server
+- EDNS server
+- Client
+
+O descriere pe scurt pentru fiecare:
+\begin{itemize}
+
+\item Main server-ul va fi responsabil de stocarea tuturor resurselor originale si va oferi updates catre edge severe, va tine evidenta cache-ului si a load-ului de pe edges si o va transmite serverului autorativ EDNS.
+
+\item Edge serverele vor tine in cache anumite resurse pe care le va servi clientilor, in timp ce transmite informatii despre load la main server.
+
+\item EDNS server-ul va primi informatiile despre toate edge serverele si le va tine mapate pentru a putea face o decizie in functie de cache, load si locatia geografica. (va juca si rol de load balancer)
+
+\item Clientul va face un request cu resursa dorita catre serverul EDNS, va primi raspuns o adresa IP si se va conecta catre edge serverul cu IP-ul respectiv.
+
+\end{itemize}
+
+Intr-un mod foarte general, arhitectura acestui gen de aplicatie poate fi descrisa foarte bine printr-o imagine:
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=1\linewidth]{with-CDN.jpeg}
+    \caption{CDN over the world}
+    \label{fig:enter-label}
+\end{figure}
+
+Iar acum sa vedem următoarea diagrama (zoom in):
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=1\linewidth]{first_diagram.png}
+    \caption{Arhitectura CDN}
+    \label{fig:enter-label}
+\end{figure}
+
+
+\section{Aspecte de Implementare}
+
+\subsection{Protocolul la nivelul aplicației și secțiuni de cod inovative}
+
+\textbf{Protocolul Client-EDNS server:}
+\begin{itemize}
+    \item Pachetul request va fi format din: lungimea pachetului + IP-ul clientului + resursa + null byte
+    \item Raspunsul va fi 4 bytes adresa IP a edge server-ului
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{packet client.png}
+    \caption{Ex. pachet Client-EDNS server}
+    \label{fig:enter-label}
+\end{figure}
+
+\textbf{Protocolul Client-Edge server:}
+\begin{itemize}
+    \item Pachetul request va fi format din: lungimea pachetului + resursa + null byte
+    \item Raspunsul va fi lungimea pachetlui + raspunsul + null byte
+    \item \textit{Asemanator cu Fig.3}
+\end{itemize}
+
+\textbf{Protocolul Edge server-Main server:}
+\begin{itemize}
+    \item Edge serverul va transmite periodic informatii despre el printr-un transfer de fisier JSON sau va transmite un GET request catre server
+    pentru a cere o resursa in cazul unui cache MISS
+    \item Main serverul va transmite anumite resurse catre edge server, impreuna cu o cuanta TTL (time to live)
+    \item \textit{Asemanator cu Fig.3} dar transferul de fisiere va fi impartit in byte chunks
+\end{itemize}
+
+\textbf{Protocolul Main server-EDNS server:}
+\begin{itemize}
+    \item Din Main server se va transmite fisierul JSON cu datele despre cache, load de la edge-servers
+    \item \textit{Asemanator cu Fig.3}  dar transferul de fisiere va fi impartit in byte chunks
+\end{itemize}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{json.png}
+    \caption{JSON data}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=1\linewidth]{cache.png}
+    \caption{Deserializat nivel 1}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=1\linewidth]{edge_server.png}
+    \caption{Deserializat nivel 2}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Concurenta}
+
+\begin{itemize}
+    \item \textbf{Main server} - la pornire va face \textbf{pre-forking} pentru a gestiona cele N edge server, iar procesul radacina va comunica cu serverul EDNS. Am ales aceasta abordarea deoarece proiectul nu isi permite ca serverul Main sa cada in cazul in care un proces da crash. Chiar dac aprocesul de forking este costisitor, acesta se face la initializare si nu afecteaza comunicarea concurenta.
+    \item \textbf{Edge server} - va contine 2 procese. Unul va comunica cu Main serverul, iar unul va crea un \textbf{thread pool} de o dimenisune k (care se va imbunatati in acuratete in timp). Fiecare thread ruleaza aceeasi functie pentru a servi clientul, in care apeleaza primitiva \texttt{accept()} in interiorul unui \texttt{mutex.lock()}. Folosesc aceasta abordare deoarece pentru un volum mare de trafic crearea unui thread pe moment poate costa cateva milisecunde + solicitare CPU, desi thread-urile sunt lighweight. Aici va depinde si de serviciul folosit pentru deployment daca accepta \textbf{multithreading}.
+    \item \textbf{EDNS server} - Va avea 2 threaduri ce vor avea acces simultan la acea variabila \texttt{Cache} alocata pe HEAP. Unul o va modifica cand primeste updates de la Main server, iar unul va trata clientii in mod \textbf{multiplexat} si va accesa variabila pentru a face decizia de alegere a edge serverului cel mai convenabil. Bineinteles, ne vom folosi de \texttt{mutex.lock()} pentru a ne proteja de \textit{undefined behavior}(un thread modifica, iar unul citeste). Am folosit aceasta abordare cu thread-uri pentru a putea avea acces la \texttt{Cache} simultan, iar multiplexarea se justifica prin reducerea costului (a call-urilor de CPU) si prin faptul ca serviciul oferit de un server DNS este rapid si light.
+    \item \textbf{Client} - 2 procese. Unul va primi INPUT si va face request-uri catre EDNS server, apoi creeaza un nou proces apeland \texttt{fork()} si redirecteaza request-ul catre edge server, apoi asteptand OUTPUT. Am ales aceasta abordare pentru a face posibil ca un request sa nu fie limitat de timpul de procesare al requestului anterior (sau anterioare).
+\end{itemize}
+
+In concluzie, toata arhitectura sistemului CDN dezvoltat poate fi encapsulat in urmatoarea diagrama detaliata (zoom in):
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{second_diagram.png}
+    \caption{Arhitectura detaliata}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Scenariu real de utilizare}
+
+O firma de aviatie vrea sa isi distribuie serviciul online de booking catre toata planeta, deoarece este populara si detine multe avioane. Firma are 2 sedii unde tine serverele, unul in Europa si unul in USA. Analistii de date angajati la firma si-au dat seama ca desi clientii ce calatoresc in zona Asiei, Africii sau a Americii de Sud sunt foarte multumiti de servicii, nu genereaza asa mult profit. In urma altui studiu, si-au dat seama ca persoanele la care pagina web se incarca in minim 5s au o probabilitate scazuta sa cumpere biletul de avion. In consecinta, firma isi face deploy seriviciului web pe edge servere plasate in zone geografice strategice pe toata planeta, furnizate de o alta firma contra-cost. In lunile urmatoare, profitul deja a inceput sa creasca.Totodata au redus incarcatura serverelor din sediu, deoarece acum tot traficul de pe site-ul web este distribuit in mod optimizat si au redus riscul de DoS si DDoS.
+
+\section{Potențiale îmbunătățiri:}
+
+\begin{itemize}
+    \item Protectie anti DoS si DDoS, proxy rate limiter pentru serverul EDNS
+    \item Pe langa TTL, implementarea unui algoritm de caching in edge server, precum LFU, LRU etc.
+    \item Mecanism de caching pentru lookups pentru serverul EDNS.
+    \item Dezvoltarea unui tunel de encriptie peste comunicari intre servere, precum TLS.
+    
+\end{itemize}
+
+\section{Referințe Bibliografice}
+\begin{itemize}
+    \item \url{https://edu.info.uaic.ro/computer-networks/}
+     \item \url{https://www.cloudflare.com/learning/cdn/what-is-a-cdn/}
+     \item \url{https://aws.amazon.com/what-is/cdn/}
+     \item \url{https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)}
+     \item \url{https://www.youtube.com/watch?v=pdPSLm629yk&t=454s}
+    \item \url{https://en.wikipedia.org/wiki/Content_delivery_network}
+    \item \url{https://en.cppreference.com/w/cpp/thread/thread}
+    \item \url{https://en.cppreference.com/w/cpp/thread/mutex}
+    \item \url{https://en.cppreference.com/w/cpp/container/unordered_set}
+    \item \url{https://github.com/nlohmann/json}
+    \item \url{https://github.com/dzilles/configparser}
+\end{itemize}
+
+\end{document}
+

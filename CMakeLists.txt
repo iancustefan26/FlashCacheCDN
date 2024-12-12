@@ -41,6 +41,18 @@ add_executable(server
         src/server/dns_server_protocol.cpp
 )
 
+add_executable(intense_load
+        src/test_resources/intense_load.cpp   #Provizor
+)
+
+add_executable(test
+        src/test_resources/test.cpp    #Provizor
+)
+
+add_executable(test_5_seconds
+        src/test_resources/test_5_seconds.cpp    #Provizor
+)
+
 
 target_include_directories(client PRIVATE src/client/include src/utils)
 target_include_directories(EDNS_server PRIVATE src/EDNS_server/include src/utils)

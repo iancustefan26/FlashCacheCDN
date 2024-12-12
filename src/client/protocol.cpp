@@ -4,7 +4,7 @@ in_addr dns_get_request(int socket_fd, const string& resource, const string& pub
 {
     // Creating the packet
     const size_t dns_packet_length = sizeof(size_t) + resource.length() + 1 + sizeof(in_addr_t);
-    // length header (4 bytes) + sender's public IPv4 (4 bytes) + request + nullptr
+    // length header (8 bytes on x64 arch) + sender's public IPv4 (4 bytes) + len(request) + nullptr
     char* dns_packet = new char[dns_packet_length];
     const in_addr_t pub_ipv4n_addr = inet_addr(public_ip.c_str());
     memcpy(dns_packet, &dns_packet_length, sizeof(size_t));
