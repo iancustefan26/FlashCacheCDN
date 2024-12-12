@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cfg_file="src/client/config/resolv.ini"
+cfg_file="./../client/config/resolv.ini"
 
 echo "IP address of the DNS server:"
 read -r ip
