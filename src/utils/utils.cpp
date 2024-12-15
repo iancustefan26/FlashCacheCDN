@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 #include <fstream>
 #include <sstream>
+#include <unistd.h>
 
 size_t call_back(void* contents, size_t size, size_t nmemb, void* userp) {
     ((string*)userp)->append((char*)contents, size * nmemb);
@@ -120,5 +121,22 @@ pair<float, float> get_memory_usage()
     return pair<float, float>((total - available) / 1024.0f, available / 1024.0f);
 }
 
+void get_available_resources(vector<string> &resources)
+{
+    // TODO: here i have to retrieve the info based on the stored folders
+    resources.clear();
+    resources.push_back("./test");
+    resources.push_back("./test_5_seconds");
+    resources.push_back("./intense_load");
+}
 
+
+string get_machine_name()
+{
+    const char* username = getlogin();
+    if (username) {
+        return username;
+    }
+    return "unknown";
+}
 

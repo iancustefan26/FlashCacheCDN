@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
         if (connect(main_server_sd, (struct sockaddr *)&main_server, sizeof(struct sockaddr_in)) == -1)
           throw runtime_error("main_server_connect failed");
         cout << "Connected to the main server on PORT: " << MAIN_SERVER_PORT << "\n";
-        treat_main_server(main_server_sd);
+        treat_main_server(main_server_sd, edge_server_private_ip);
         break;
       }
     default:

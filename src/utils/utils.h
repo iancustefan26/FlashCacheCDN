@@ -3,6 +3,7 @@
 #define UTILS_H
 #include <string>
 #include <iostream>
+#include <vector>
 #include <curl/curl.h>
 
 
@@ -19,6 +20,10 @@ string get_private_ipv4();
 float get_cpu_load();
 
 pair<float, float> get_memory_usage();
+
+void get_available_resources(vector<string> &resources);
+
+string get_machine_name();
 
 
 
