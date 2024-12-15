@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <unistd.h>
+#include <utils.h>
 
 using namespace std;
 
@@ -18,5 +19,10 @@ void treat_main_server(int main_server_sd)
         // Provizor
         sleep(10);
         cout << "PID: " << getpid() << " communicating with the main server\n";
+        float cpu_load = get_cpu_load();
+        cout << "CPU Load: " << cpu_load << "%" << endl;
+        pair<float, float> memory_load = get_memory_usage();
+        cout << "Memory Used: " << memory_load.first << " MB" << endl;
+        cout << "Memory Available: " << memory_load.second << " MB" << endl;
     }
 }

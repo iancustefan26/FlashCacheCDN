@@ -1,16 +1,7 @@
 #include "cache.h"
 
-float CPU::get_average_load() const
-{
-    return this->last_1_minute + this->last_5_minutes + this->last_15_minutes / 3.0f * 100.0f;
-}
 
 float Memory::get_average_load() const
-{
-    return this->used_in_MB * 100.0f / this->size_in_MB;
-}
-
-float Disk::get_average_load() const
 {
     return this->used_in_MB * 100.0f / this->size_in_MB;
 }
@@ -32,9 +23,8 @@ in_addr_t Edge_server::get_ip() const
 float Edge_server::get_average_load() const
 {
     // The CPU load is the most important, then the RAM and then the Disk /*Provizor*/
-    return 0.55f * load.cpu_load.get_average_load()
+    return 0.65f * load.cpu_load
     + 0.35f * load.memory_load.get_average_load()
-    + 0.1f * load.disk_load.get_average_load()
     ;
 }
 
@@ -80,9 +70,8 @@ void Cache::initialize()
     edge_servers.push_back
     (
         Edge_server({
-            {0.15, 0.37, 0.40},
+            6.77,
             {1024, 240},
-            {5096, 1055}
         },
         inet_addr("10.176.86.215"),
         "edge-server-1",

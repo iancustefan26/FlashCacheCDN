@@ -17,14 +17,6 @@
 using namespace std;
 using namespace nlohmann;
 
-struct CPU
-{
-    float last_1_minute;
-    float last_5_minutes;
-    float last_15_minutes;
-
-    float get_average_load() const;
-};
 
 struct Memory
 {
@@ -34,19 +26,10 @@ struct Memory
     float get_average_load() const;
 };
 
-struct Disk
-{
-    float size_in_MB;
-    float used_in_MB;
-
-    float get_average_load() const;
-};
-
 struct Load
 {
-    CPU cpu_load;
+    float cpu_load;
     Memory memory_load;
-    Disk disk_load;
 };
 
 class Edge_server
