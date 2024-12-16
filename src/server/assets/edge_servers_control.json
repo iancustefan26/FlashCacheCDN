@@ -1,85 +1,70 @@
-{
-    "10.176.86.1": {
-        "load": {
-            "cpu_load": 13.33448314666748,
-            "memory_load": {
-                "available": 55368.953125,
-                "used": 8567.88671875
-            }
-        },
-        "name": "laptop26",
-        "resources": [
-            "./test",
-            "./test_5_seconds",
-            "./intense_load"
-        ]
+[
+    {
+        "10.10.100.16": {
+            "load": {
+                "cpu_load": 11.259060859680176,
+                "memory_load": {
+                    "available": 56486.2578125,
+                    "used": 7450.58203125
+                }
+            },
+            "name": "laptop26",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    },
+    {
+        "10.10.100.16": {
+            "load": {
+                "cpu_load": 11.414098739624023,
+                "memory_load": {
+                    "available": 56455.03125,
+                    "used": 7481.80859375
+                }
+            },
+            "name": "laptop26",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    },
+    {
+        "10.10.100.16": {
+            "load": {
+                "cpu_load": 13.416296005249023,
+                "memory_load": {
+                    "available": 56433.41015625,
+                    "used": 7503.4296875
+                }
+            },
+            "name": "laptop26",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    },
+    {
+        "10.10.100.16": {
+            "load": {
+                "cpu_load": 4.603976249694824,
+                "memory_load": {
+                    "available": 56411.7265625,
+                    "used": 7525.11328125
+                }
+            },
+            "name": "laptop26",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
     }
-}
-{
-    "10.176.86.1": {
-        "load": {
-            "cpu_load": 5.1117658615112305,
-            "memory_load": {
-                "available": 55345.35546875,
-                "used": 8591.484375
-            }
-        },
-        "name": "laptop26",
-        "resources": [
-            "./test",
-            "./test_5_seconds",
-            "./intense_load"
-        ]
-    }
-}
-{
-    "10.176.86.1": {
-        "load": {
-            "cpu_load": 7.966917991638184,
-            "memory_load": {
-                "available": 55322.6640625,
-                "used": 8614.17578125
-            }
-        },
-        "name": "laptop26",
-        "resources": [
-            "./test",
-            "./test_5_seconds",
-            "./intense_load"
-        ]
-    }
-}
-{
-    "10.176.86.1": {
-        "load": {
-            "cpu_load": 4.324781894683838,
-            "memory_load": {
-                "available": 55318.796875,
-                "used": 8618.04296875
-            }
-        },
-        "name": "laptop26",
-        "resources": [
-            "./test",
-            "./test_5_seconds",
-            "./intense_load"
-        ]
-    }
-}
-{
-    "10.176.86.1": {
-        "load": {
-            "cpu_load": 4.417604446411133,
-            "memory_load": {
-                "available": 55308.73828125,
-                "used": 8628.1015625
-            }
-        },
-        "name": "laptop26",
-        "resources": [
-            "./test",
-            "./test_5_seconds",
-            "./intense_load"
-        ]
-    }
-}
+]
