@@ -58,7 +58,7 @@ int main() {
       case -1:
         throw runtime_error("fork() failed");
       case 0:
-        // The process that will communicate with edge server #i to retrieve information about the load
+        // The process sleep(10);that will communicate with edge server #i to retrieve information about the load
         // the cached info and the CACHE MISSES that occur
           close(socket_dns_sd);
           handle_edge_server(i, socket_edge_sd); // infinite loop

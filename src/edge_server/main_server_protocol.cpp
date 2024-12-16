@@ -5,6 +5,8 @@
 #include <utils.h>
 #include <nlohmann/json.hpp>
 
+#include "../client/include/protocol.h"
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -47,5 +49,16 @@ void treat_main_server(int main_server_sd, string edge_server_private_ip)
       string json_output = system_stats.dump(4);
       cout << "Serialized JSON info about the machine:" << "\n";
       cout << json_output << "\n";
+        size_t packet_size = json_output.size() + sizeof(size_t);
+        // size + JSON
+        char* packet = new char[packet_size];
+        memcpy(packet, &packet_size, sizeof(size_t));
+        memcpy(packet + sizeof(size_t), json_output.c_str(), packet_size - sizeof(size_t));
+        const size_t bytes_sent = send(main_server_sd, packet, packet_size, 0);
+        if (bytes_sent == -1)
+            throw logic_error("Sending response to main server failed");
+        if (bytes_sent == 0)
+            throw logic_error("Connection with the main server was closed gracefully");
+        delete[] packet;
     }
 }
