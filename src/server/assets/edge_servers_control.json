@@ -1,14 +1,14 @@
 [
     {
-        "10.10.100.16": {
+        "10.176.86.169": {
             "load": {
-                "cpu_load": 11.259060859680176,
+                "cpu_load": 3.700000047683716,
                 "memory_load": {
-                    "available": 56486.2578125,
-                    "used": 7450.58203125
+                    "available": 1660.16796875,
+                    "used": 302.3828125
                 }
             },
-            "name": "laptop26",
+            "name": "ubuntu",
             "resources": [
                 "./test",
                 "./test_5_seconds",
@@ -17,49 +17,15 @@
         }
     },
     {
-        "10.10.100.16": {
+        "10.176.86.130": {
             "load": {
-                "cpu_load": 11.414098739624023,
+                "cpu_load": 100.0,
                 "memory_load": {
-                    "available": 56455.03125,
-                    "used": 7481.80859375
+                    "available": 1659.80859375,
+                    "used": 302.7421875
                 }
             },
-            "name": "laptop26",
-            "resources": [
-                "./test",
-                "./test_5_seconds",
-                "./intense_load"
-            ]
-        }
-    },
-    {
-        "10.10.100.16": {
-            "load": {
-                "cpu_load": 13.416296005249023,
-                "memory_load": {
-                    "available": 56433.41015625,
-                    "used": 7503.4296875
-                }
-            },
-            "name": "laptop26",
-            "resources": [
-                "./test",
-                "./test_5_seconds",
-                "./intense_load"
-            ]
-        }
-    },
-    {
-        "10.10.100.16": {
-            "load": {
-                "cpu_load": 4.603976249694824,
-                "memory_load": {
-                    "available": 56411.7265625,
-                    "used": 7525.11328125
-                }
-            },
-            "name": "laptop26",
+            "name": "ubuntu",
             "resources": [
                 "./test",
                 "./test_5_seconds",
