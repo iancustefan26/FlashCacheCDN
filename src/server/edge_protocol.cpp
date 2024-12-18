@@ -2,6 +2,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+
 #define JSON_FILE "../src/server/assets/edge_servers_control.json"
 
 using json = nlohmann::json;
@@ -18,11 +19,22 @@ void append_to_info_file(const string& json_buffer)
         return;
     }
 
-    // Parse the incoming JSON buffer
-    json new_entry = json::parse(json_buffer);
-    string new_ip = new_entry.begin().key(); // Extract the IP address (key)
+    int fd = open(JSON_FILE, O_WRONLY);
+    if (fd == -1)
+    {
+        cerr << "Error opening JSON file for writing\n";
+        return;
+    }
+    if (flock(fd, LOCK_SH | LOCK_NB) == -1)
+    {
+        cerr << "Error locking JSON file\n";
+        close(fd);
+        return;
+    }
 
-    // Read the existing JSON file
+    json new_entry = json::parse(json_buffer);
+    string new_ip = new_entry.begin().key();
+
     ifstream input_file(JSON_FILE);
     json existing_json;
 
@@ -38,33 +50,32 @@ void append_to_info_file(const string& json_buffer)
         existing_json = json::array();
     }
 
-    // Ensure the top-level JSON is an array
+
     if (!existing_json.is_array()) {
         cerr << "Error: JSON file is not an array. Resetting to an empty array.\n";
         existing_json = json::array();
     }
 
-    // Check if the IP already exists and modify it if found
     bool found = false;
     for (auto& entry : existing_json) {
-        if (entry.contains(new_ip)) { // Check if this entry matches the new IP
-            entry = new_entry; // Update the entry
+        if (entry.contains(new_ip)) {
+            entry = new_entry;
             found = true;
             break;
         }
     }
 
-    // If the IP does not exist, append the new entry
     if (!found) {
         existing_json.push_back(new_entry);
     }
-
-    // Write the updated JSON back to the file
     ofstream output_file(JSON_FILE);
     if (!output_file.is_open()) {
         cerr << "Could not open JSON file for writing: " << JSON_FILE << "\n";
         return;
     }
-    output_file << existing_json.dump(4); // Pretty-print with 4 spaces
+    output_file << existing_json.dump(4);
     output_file.close();
+
+    flock(fd, LOCK_UN);
+    close(fd);
 }

@@ -6,8 +6,11 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <nlohmann/json_fwd.hpp>
+#include <unistd.h>
+#include <sys/file.h>
 
 using namespace std;
+
 
 void append_to_info_file(const string& json_buffer);
 

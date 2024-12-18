@@ -2,10 +2,10 @@
     {
         "10.176.86.169": {
             "load": {
-                "cpu_load": 3.700000047683716,
+                "cpu_load": 27.789806365966797,
                 "memory_load": {
-                    "available": 1660.16796875,
-                    "used": 302.3828125
+                    "available": 1654.68359375,
+                    "used": 307.8671875
                 }
             },
             "name": "ubuntu",
@@ -26,6 +26,23 @@
                 }
             },
             "name": "ubuntu",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    },
+    {
+        "10.176.86.1": {
+            "load": {
+                "cpu_load": 14.89361572265625,
+                "memory_load": {
+                    "available": 55230.51171875,
+                    "used": 8706.328125
+                }
+            },
+            "name": "laptop26",
             "resources": [
                 "./test",
                 "./test_5_seconds",
