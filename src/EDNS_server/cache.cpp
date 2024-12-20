@@ -67,22 +67,66 @@ void Cache::initialize()
     // There I parse the JSON received from the main server full of info about the edge servers
     // and I will deserialize it into C++ objects and add them to the vector
     // Example:
-    edge_servers.push_back
-    (
-        Edge_server({
-            6.77,
-            {1024, 240},
-        },
-        inet_addr("10.176.86.130"),
-        "edge-server-1",
-        {"./test", "./test_5_seconds"}
-        )
-    );
+    // Read the JSON file
+    ifstream json_file(JSON_FILE);
+    if (!json_file.is_open())
+    {
+        cerr << "Could not open JSON file: " << JSON_FILE << "\n";
+        return;
+    }
+
+    // Parse the JSON file
+    json parsed_json;
+    try
+    {
+        json_file >> parsed_json;
+    }
+    catch (const json::exception &e)
+    {
+        cerr << "Error parsing JSON: " << e.what() << "\n";
+        return;
+    }
+
+    // Clear the current edge_servers list
+    edge_servers.clear();
+
+    // Iterate over the JSON data to populate edge_servers
+    for (const auto &server_entry : parsed_json)
+    {
+        for (const auto &server_ip : server_entry.items())
+        {
+            try
+            {
+                const auto &server_info = server_ip.value();
+
+                // Extract server data
+                string ip = server_ip.key();
+                string name = server_info.at("name").get<string>();
+                float cpu_load = server_info.at("load").at("cpu_load").get<float>();
+                float memory_available = server_info.at("load").at("memory_load").at("available").get<float>();
+                float memory_used = server_info.at("load").at("memory_load").at("used").get<float>();
+                unordered_set<string> resources(
+                    server_info.at("resources").begin(),
+                    server_info.at("resources").end());
+
+                // Create Edge_server object and add it to edge_servers
+                edge_servers.emplace_back(
+                    Edge_server({cpu_load, {memory_available, memory_used}}, inet_addr(ip.c_str()), name, resources));
+            }
+            catch (const json::exception &e)
+            {
+                cerr << "Error processing server entry: " << e.what() << "\n";
+                continue;
+            }
+        }
+    }
+
+    cout << "Cache initialized with " << edge_servers.size() << " edge servers.\n";
+
 }
 
 void Cache::update_mapping()
 {
- // TODO: Communicates with the main server and receives the newest updates through the JSON file
     // TODO: and when he receives, update the stored data with the latest JSON
     int main_server_sd = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in main_server;
@@ -101,14 +145,14 @@ void Cache::update_mapping()
         if (bytes_received == 0 || bytes_received == -1)
         {
             cerr << "Invalid JSON received\n";
-            return;
+            continue;
         }
         char* json_buffer = new char[packet_size];
         bytes_received = recv(main_server_sd, json_buffer, packet_size - sizeof(size_t), 0);
         if (bytes_received == 0 || bytes_received == -1)
         {
             cerr << "Invalid JSON received\n";
-            return;
+            continue;
         }
         json_buffer[bytes_received] = '\0';
         cout << json_buffer << "\n";
@@ -119,6 +163,9 @@ void Cache::update_mapping()
         }
         output_file << json_buffer;
         output_file.close();
+
+        // Update the Cache data structure with the new received info
+        this->initialize();
         delete[] json_buffer;
     }
 }
@@ -150,7 +197,8 @@ in_addr_t Cache::decide(const char* resource, in_addr_t client_ip)
     for (auto& edge: edge_servers)
     {
         float decide_index = edge.compute_decide_grade(client_ip, resource);
-        if (decide_index > most_convenient_index)
+        cout << "Edge: " << inet_ntoa({edge.get_ip()}) << " -- decide index: " << decide_index << "\n";
+        if (decide_index < most_convenient_index)
             most_convenient_edge = edge, most_convenient_index = decide_index;
     }
     cout << "Returned to the client egde-server: IP: " << inet_ntoa({most_convenient_edge.get_ip()})
