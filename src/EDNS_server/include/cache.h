@@ -11,7 +11,9 @@
 #include <unistd.h>
 #include <cstring>
 #include <err.h>
+#include <fstream>
 
+#define JSON_FILE "../src/EDNS_server/config/edge_servers_info.json"
 #define MAIN_SERVER_PORT 6666
 
 using namespace std;

@@ -11,6 +11,8 @@
 
 using namespace std;
 
+#define JSON_FILE "../src/server/assets/edge_servers_control.json"
+
 
 void append_to_info_file(const string& json_buffer);
 

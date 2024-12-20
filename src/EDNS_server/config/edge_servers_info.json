@@ -1,13 +1,53 @@
-{
-  "10.126.86.215" : {
-    "name": "edge-server-3",
-    "load" : {
-      "cpu_load": 6.77,
-      "memory_load": {
-        "used": 376.5,
-        "available": 900.0
-      }
-  },
-    "resources" : ["./test", "./test_5_seconds"]
-  }
-}
+[
+    {
+        "10.176.86.1": {
+            "load": {
+                "cpu_load": 15.108526229858398,
+                "memory_load": {
+                    "available": 52429.36328125,
+                    "used": 11507.46484375
+                }
+            },
+            "name": "laptop26",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    },
+    {
+        "10.176.86.169": {
+            "load": {
+                "cpu_load": 4.308617115020752,
+                "memory_load": {
+                    "available": 1600.03125,
+                    "used": 362.51953125
+                }
+            },
+            "name": "ubuntu",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    },
+    {
+        "10.176.86.130": {
+            "load": {
+                "cpu_load": 3.711134195327759,
+                "memory_load": {
+                    "available": 1600.59765625,
+                    "used": 361.953125
+                }
+            },
+            "name": "ubuntu",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    }
+]

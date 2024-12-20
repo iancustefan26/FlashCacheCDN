@@ -92,11 +92,34 @@ void Cache::update_mapping()
     if (connect(main_server_sd, (sockaddr *)&main_server, sizeof(sockaddr_in)) == -1)
         throw runtime_error("main_server_connect failed");
     cout << "Connected to the main server on PORT: " << MAIN_SERVER_PORT << "\n";
-    for (int i = 0; i < 100; i++)
+    while (true)
     {
-        /*Provizor infinite loop*/
         sleep(5);
         cout << "Updating cache info from JSON file...\n";
+        size_t packet_size;
+        size_t bytes_received = recv(main_server_sd, &packet_size, sizeof(size_t), 0);
+        if (bytes_received == 0 || bytes_received == -1)
+        {
+            cerr << "Invalid JSON received\n";
+            return;
+        }
+        char* json_buffer = new char[packet_size];
+        bytes_received = recv(main_server_sd, json_buffer, packet_size - sizeof(size_t), 0);
+        if (bytes_received == 0 || bytes_received == -1)
+        {
+            cerr << "Invalid JSON received\n";
+            return;
+        }
+        json_buffer[bytes_received] = '\0';
+        cout << json_buffer << "\n";
+        ofstream output_file(JSON_FILE);
+        if (!output_file.is_open()) {
+            cerr << "Could not open JSON file for writing: " << JSON_FILE << "\n";
+            return;
+        }
+        output_file << json_buffer;
+        output_file.close();
+        delete[] json_buffer;
     }
 }
 

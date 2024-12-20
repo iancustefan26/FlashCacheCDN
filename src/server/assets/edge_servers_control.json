@@ -1,11 +1,28 @@
 [
     {
+        "10.176.86.1": {
+            "load": {
+                "cpu_load": 24.25959014892578,
+                "memory_load": {
+                    "available": 52463.43359375,
+                    "used": 11473.39453125
+                }
+            },
+            "name": "laptop26",
+            "resources": [
+                "./test",
+                "./test_5_seconds",
+                "./intense_load"
+            ]
+        }
+    },
+    {
         "10.176.86.169": {
             "load": {
-                "cpu_load": 27.789806365966797,
+                "cpu_load": 4.308617115020752,
                 "memory_load": {
-                    "available": 1654.68359375,
-                    "used": 307.8671875
+                    "available": 1600.03125,
+                    "used": 362.51953125
                 }
             },
             "name": "ubuntu",
@@ -19,30 +36,13 @@
     {
         "10.176.86.130": {
             "load": {
-                "cpu_load": 100.0,
+                "cpu_load": 3.6036014556884766,
                 "memory_load": {
-                    "available": 1659.80859375,
-                    "used": 302.7421875
+                    "available": 1600.26953125,
+                    "used": 362.28125
                 }
             },
             "name": "ubuntu",
-            "resources": [
-                "./test",
-                "./test_5_seconds",
-                "./intense_load"
-            ]
-        }
-    },
-    {
-        "10.176.86.1": {
-            "load": {
-                "cpu_load": 14.89361572265625,
-                "memory_load": {
-                    "available": 55230.51171875,
-                    "used": 8706.328125
-                }
-            },
-            "name": "laptop26",
             "resources": [
                 "./test",
                 "./test_5_seconds",

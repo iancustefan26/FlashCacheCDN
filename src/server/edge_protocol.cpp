@@ -3,7 +3,6 @@
 #include <nlohmann/json.hpp>
 
 
-#define JSON_FILE "../src/server/assets/edge_servers_control.json"
 
 using json = nlohmann::json;
 // Here I will add functions for handling data transmission (config files, updates, cache TTL etc.) from main to edge,

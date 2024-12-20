@@ -1,12 +1,21 @@
 #pragma once
 #ifndef DNS_SERVER_PROTOCOL_H
 #define DNS_SERVER_PROTOCOL_H
+#include <cstring>
 #include <iostream>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/file.h>
 #include <unistd.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+
+#define JSON_FILE "../src/server/assets/edge_servers_control.json"
 
 using namespace std;
+
+void send_json_info(int socket_sd);
 
 inline void handle_dns_info_transmission(int socket_sd)
 {
@@ -19,9 +28,9 @@ inline void handle_dns_info_transmission(int socket_sd)
          << " with IP: " << inet_ntoa(dns.sin_addr) << "\n";
     while (true)
     {
-        // Provizor function
         sleep(10);
         cout << "Giving info about edge-servers to EDNS0 server...\n";
+        send_json_info(dns_sd);
     }
 }
 
