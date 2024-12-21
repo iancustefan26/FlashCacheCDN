@@ -29,15 +29,13 @@ char* receive_packet(int socket_fd)
 
 RequestType parse_request(char *packet)
 {
-    // TODO: parse different types of request
+    // TODO: Recognize different types of request
     // Future features
     return RequestType::EXEC;
 }
 
 void exec_script(char* packet, string* response)
 {
-    char work_dir[128];
-    getcwd(work_dir, 128);
     // A more C++ like style to make an auto-destructible pointer with popen function
     // using unique_ptr and lambda functions
     const unique_ptr<FILE, void(*)(FILE*)> output(popen(packet, "r"), [](FILE* file) { pclose(file); });

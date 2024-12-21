@@ -16,7 +16,7 @@
 // Future features
 enum RequestType
 {
-    EXEC, // For now only this one is available
+    EXEC,
     SEND
 };
 

@@ -32,5 +32,23 @@
                 "./intense_load"
             ]
         }
+    },
+    {
+        "10.176.86.1": {
+            "load": {
+                "cpu_load": 4.43648099899292,
+                "memory_load": {
+                    "available": 56072.6015625,
+                    "used": 7864.2109375
+                }
+            },
+            "name": "laptop26",
+            "resources": [
+                "./find_primes",
+                "./intense_load",
+                "./test",
+                "./test_5_seconds"
+            ]
+        }
     }
 ]

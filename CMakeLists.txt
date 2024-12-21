@@ -41,17 +41,15 @@ add_executable(server
         src/server/dns_server_protocol.cpp
 )
 
-add_executable(intense_load
-        src/test_resources/intense_load.cpp   #Provizor
-)
 
-add_executable(test
-        src/test_resources/test.cpp    #Provizor
-)
+set(AVAILABLE_RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/edge_server/available_resources")
+file(GLOB RESOURCE_SOURCES "${AVAILABLE_RESOURCES_DIR}/*.cpp")
 
-add_executable(test_5_seconds
-        src/test_resources/test_5_seconds.cpp    #Provizor
-)
+foreach(SOURCE_FILE ${RESOURCE_SOURCES})
+    get_filename_component(TARGET_NAME ${SOURCE_FILE} NAME_WE)
+    add_executable(${TARGET_NAME} ${SOURCE_FILE})
+endforeach()
+
 
 
 target_include_directories(client PRIVATE src/client/include src/utils)

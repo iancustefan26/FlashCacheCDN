@@ -1,5 +1,6 @@
 #include "utils.h"
 
+#include <cstring>
 #include <netdb.h>
 #include <curl/curl.h>
 #include <ifaddrs.h>
@@ -125,9 +126,20 @@ void get_available_resources(vector<string> &resources)
 {
     // TODO: here i have to retrieve the info based on the stored folders
     resources.clear();
-    resources.push_back("./test");
-    resources.push_back("./test_5_seconds");
-    resources.push_back("./intense_load");
+    char path[256]; // this will be the build directory
+    getcwd(path, sizeof(path));
+    strcat(path, "/../src/edge_server/available_resources");
+    cout << "Available resources path: " << path << "\n";
+    for (const auto& entry : filesystem::directory_iterator(path)) {
+        if (entry.is_regular_file()) { // Check if it's a file
+            string filename = entry.path().filename().string(); // Get the filename with extension
+            size_t dotPos = filename.find_last_of('.'); // Find the last dot position
+            if (dotPos != string::npos) {
+                filename = filename.substr(0, dotPos); // Remove the extension
+            }
+            resources.push_back("./" + filename);
+        }
+    }
 }
 
 
