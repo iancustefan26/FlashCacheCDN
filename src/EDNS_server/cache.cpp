@@ -22,7 +22,7 @@ in_addr_t Edge_server::get_ip() const
 
 float Edge_server::get_average_load() const
 {
-    // The CPU load is the most important, then the RAM and then the Disk /*Provizor*/
+    // The CPU load is the most important, then the RAM and then the Disk
     return 0.65f * load.cpu_load
     + 0.35f * load.memory_load.get_average_load()
     ;
@@ -31,15 +31,35 @@ float Edge_server::get_average_load() const
 float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
 {
     // Estimating the geographical distance between the client and the edge-server, resulting
-    // in an index reported to 100%
-    // TODO: implementing the actual logic
+    // in an index reported to 1.0f
+    // Split IPs into their four bytes
+    uint8_t server_bytes[4];
+    uint8_t client_bytes[4];
+    in_addr_t server_ip = get_ip();
 
-    /*Provizor*/
-    mt19937 generator(std::random_device{}());
-    uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (int i = 0; i < 3; ++i) {
+        server_bytes[i] = (server_ip >> (24 - i * 8)) & 0xFF; // Extracting the first 3 bytes from the IP
+        client_bytes[i] = (client_ip >> (24 - i * 8)) & 0xFF; // 192       168      1      101
+    }
 
-    const float random_float = distribution(generator);
-    return random_float;
+    float index = 0.0f;
+
+    // Calculate contribution for each byte
+    // (most LAN's have the network mask 255.255.255.0 so the last byte doesn't play a important role
+    // to the geolocation)
+    for (int i = 0; i < 3; ++i)
+    {
+        if (server_bytes[i] == client_bytes[i])
+        {
+            index += 0.33f; // Perfect match of the byte
+        }
+        else
+        {
+            float contribution = 0.33f - (abs(1.0f * static_cast<int>(server_bytes[i]) - 1.0f * static_cast<int>(client_bytes[i])) / 255.0f * 0.33f);
+            index += contribution;
+        }
+    }
+    return index;
 }
 
 
