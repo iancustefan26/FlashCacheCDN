@@ -4,7 +4,7 @@
 using namespace std;
 
 
-// TODO: Replace this with the actual IPv4 addresses
+// TODO: (future release) Replace this with the actual IPv4 addresses
 #define PORT_FOR_EDGE 3333
 #define PORT_FOR_DNS 6666
 #define N_OF_EDGES 5
@@ -62,8 +62,6 @@ int main() {
         // the cached info and the CACHE MISSES that occur
           close(socket_dns_sd);
           handle_edge_server(i, socket_edge_sd); // infinite loop
-        // TODO: If an edge-server crashes (function returns) we would have to handle this exception and
-        // TODO: quickly remove the edge-server from the cached info until it reconnects
           close(socket_edge_sd);
           return 0;
     default:

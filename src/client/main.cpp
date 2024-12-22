@@ -13,7 +13,6 @@
 using namespace std;
 
 const string config_path = "../src/client/config/resolv.ini";
-// TODO: rename the descriptors from _fd to _sd (socket_descriptor) for all the code
 
 int main(int argc, char* argv[]) {
   // Initializing the settings from the config file

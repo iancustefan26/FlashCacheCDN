@@ -12,7 +12,7 @@ using namespace std;
 
 const string config_path = "../src/edge_server/config/config.ini";
 
-// TODO: implement signal handlers for closing the servers correctly
+
 
 int main(int argc, char *argv[]) {
   if (argc != 2)
@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
   }
   // Initializing the settings from the config file
   ConfigParser parser = ConfigParser(config_path);
-  // TODO: for now this will be a constant number but it will be more accurate in the future based on the number of clients in the same time
   int thread_count = parser.aConfig<int>("pool", "poolsize");
 
   const string edge_server_private_ip = get_private_ipv4();

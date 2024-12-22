@@ -16,7 +16,6 @@
 #define PORT 5053
 using namespace std;
 
-// TODO: renaming the variables
 // TODO: think about he improvements that can be done against DoS or DDoS attacks
 
 int main(int argc, char *argv[]) {
@@ -26,7 +25,7 @@ int main(int argc, char *argv[]) {
     return EXIT_SUCCESS;
   }
   // Creating the object that initializes the cached info about edge-servers (load, content, geolocation)
-  // TODO: implement mutex lock on this variable so it will be safe for one thread to modify it
+  // TODO: (future release) implement mutex lock on this variable so it will be safe for one thread to modify it
   // TODO: and one to read it. In terms of memory safety, having a mutable reference and an immutable
   // TODO: one at the same time is an unsafe operation, and can lead to undefined behaviour
   Cache* mapped_cached_content = new Cache(argv[1]);
@@ -72,7 +71,7 @@ int main(int argc, char *argv[]) {
     // I have done a little bit of research with this timeval using a syscall trace
     // and for whatever reason if I initialize it outside the loop
     // it sets to {0, 0} after the first loop and it overloads the CPU by doing
-    // TODO: improvements on setting this timeval value based on the amount of requests
+    // TODO: (future release) improvements on setting this timeval value based on the amount of requests
     tv = {0, 6};
     memcpy(&read_fds, &active_fds, sizeof(read_fds)); // Updating the set of descriptors
     if (select (number_of_fds+1, &read_fds, nullptr, nullptr, &tv) < 0)

@@ -124,7 +124,6 @@ pair<float, float> get_memory_usage()
 
 void get_available_resources(vector<string> &resources)
 {
-    // TODO: here i have to retrieve the info based on the stored folders
     resources.clear();
     char path[256]; // this will be the build directory
     getcwd(path, sizeof(path));
