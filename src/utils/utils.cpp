@@ -43,7 +43,6 @@ string get_public_ipv4()
 
 string get_private_ipv4() {
     ifaddrs* ifaddr;
-    char host[NI_MAXHOST];
 
     if (getifaddrs(&ifaddr) == -1) {
         cerr << "getifaddrs() failed - returned loopback\n";
@@ -55,6 +54,7 @@ string get_private_ipv4() {
             continue;
 
         if (it->ifa_addr->sa_family == AF_INET) {
+            char host[NI_MAXHOST];
             const void* address = &((sockaddr_in*)it->ifa_addr)->sin_addr;
             inet_ntop(AF_INET, address, host, NI_MAXHOST);
             string ip = host;

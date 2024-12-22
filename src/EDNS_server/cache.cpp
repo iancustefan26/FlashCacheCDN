@@ -28,7 +28,7 @@ float Edge_server::get_average_load() const
     ;
 }
 
-float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
+float Edge_server::get_geo_distance_estimation_index(const in_addr_t client_ip)
 {
     // Estimating the geographical distance between the client and the edge-server, resulting
     // in an index reported to 1.0f
@@ -45,7 +45,7 @@ float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
     float index = 0.0f;
 
     // Calculate contribution for each byte
-    // (most LAN's have the network mask 255.255.255.0 so the last byte doesn't play a important role
+    // (most LAN's have the network mask 255.255.255.0 so the last byte doesn't play an important role
     // to the geolocation)
     for (int i = 0; i < 3; ++i)
     {
@@ -65,9 +65,10 @@ float Edge_server::get_geo_distance_estimation_index(in_addr_t client_ip)
 
 float Edge_server::compute_decide_grade(in_addr_t client_ip, const char* resource)
 {
-    // A cache MISS but still the most convenient one
+    // A cache MISS
+    // Returns 0 so this edge server will not be picked
     if (resources.contains(resource) == false)
-        return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.33f + 0.0f;
+        return 0.0f;
 
     return get_geo_distance_estimation_index(client_ip) * 0.67f + get_average_load() * 0.33f + 1.0f;
 }
@@ -75,7 +76,7 @@ float Edge_server::compute_decide_grade(in_addr_t client_ip, const char* resourc
 Cache::Cache(const char* main_server_ip)
 {
     this -> main_server_ip = main_server_ip;
-    number_of_edge_servers = 5; // TODO: receive the actual number of edge servers from the main server through a socket or from a config file
+    number_of_edge_servers = 10;  // Replace with the maximum number of edge-servers that can be available
     edge_servers.reserve(number_of_edge_servers);
 
     // Implement the deserialization of the JSON file and initialize the members
@@ -107,10 +108,7 @@ void Cache::initialize()
         return;
     }
 
-    // Clear the current edge_servers list
     edge_servers.clear();
-
-    // Iterate over the JSON data to populate edge_servers
     for (const auto &server_entry : parsed_json)
     {
         for (const auto &server_ip : server_entry.items())
@@ -120,7 +118,7 @@ void Cache::initialize()
                 const auto &server_info = server_ip.value();
 
                 // Extract server data
-                string ip = server_ip.key();
+                const string& ip = server_ip.key();
                 string name = server_info.at("name").get<string>();
                 float cpu_load = server_info.at("load").at("cpu_load").get<float>();
                 float memory_available = server_info.at("load").at("memory_load").at("available").get<float>();
@@ -136,7 +134,6 @@ void Cache::initialize()
             catch (const json::exception &e)
             {
                 cerr << "Error processing server entry: " << e.what() << "\n";
-                continue;
             }
         }
     }
@@ -217,8 +214,15 @@ in_addr_t Cache::decide(const char* resource, in_addr_t client_ip)
     for (auto& edge: edge_servers)
     {
         float decide_index = edge.compute_decide_grade(client_ip, resource);
-        cout << "Edge: " << inet_ntoa({edge.get_ip()}) << " -- decide index: " << decide_index << "\n";
-        if (decide_index < most_convenient_index)
+        cout << "Edge: " << inet_ntoa({edge.get_ip()}) << " -- decide index: " << decide_index;
+        if (decide_index == 0.0f)
+        {
+            cout << " (Resource not cached)\n";
+            continue;
+        }
+        cout << "\n";
+
+        if (decide_index < most_convenient_index )
             most_convenient_edge = edge, most_convenient_index = decide_index;
     }
     cout << "Returned to the client egde-server: IP: " << inet_ntoa({most_convenient_edge.get_ip()})

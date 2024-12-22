@@ -13,7 +13,7 @@ in_addr_t handle_request(const char* request, const size_t length, Cache* mapped
     memcpy(&client_address, request + length - sizeof(in_addr), sizeof(in_addr));
     cout << "Client's public IPv4 address: " << inet_ntoa(client_address) << "\n";
     const in_addr_t chosen_edge_server = mapped_cached_content->decide(resource, client_address.s_addr);
-    cout << "Chosen edge server's IP: " << inet_ntoa((in_addr)chosen_edge_server) << "\n";
+    cout << "Chosen edge server's IP: " << inet_ntoa({chosen_edge_server}) << "\n";
     return chosen_edge_server;
 }
 

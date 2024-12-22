@@ -42,7 +42,7 @@ void send_get_resource(int edge_server_sd, const string& resource)
     // Creating the packet
     const size_t packet_size = resource.length() + sizeof(size_t) + 1;
     char* packet = new char[packet_size];
-    memcpy(packet, &packet_size, sizeof(size_t)); // Lenght header of the packet
+    memcpy(packet, &packet_size, sizeof(size_t)); // Length header of the packet
     memcpy(packet + sizeof(size_t), resource.c_str(),  packet_size - sizeof(size_t)); // Adding the resource to the packet
     size_t sent_bytes = send(edge_server_sd, packet, packet_size, 0);
     delete[] packet; // Freeing the memory

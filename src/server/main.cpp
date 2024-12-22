@@ -22,7 +22,7 @@ int main() {
   const int socket_edge_sd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_edge_sd == -1)
     throw runtime_error("socket() failed");
-  if (bind(socket_edge_sd, (struct sockaddr *)&main_server_for_edge, sizeof(struct sockaddr_in)) == -1)
+  if (bind(socket_edge_sd, (sockaddr *)&main_server_for_edge, sizeof(struct sockaddr_in)) == -1)
     throw runtime_error("bind() failed");
   if (listen(socket_edge_sd, 5) == -1)
     throw runtime_error("listen() failed");
@@ -58,7 +58,7 @@ int main() {
       case -1:
         throw runtime_error("fork() failed");
       case 0:
-        // The process sleep(10);that will communicate with edge server #i to retrieve information about the load
+        // The process that will communicate with edge server #i to retrieve information about the load
         // the cached info and the CACHE MISSES that occur
           close(socket_dns_sd);
           handle_edge_server(i, socket_edge_sd); // infinite loop

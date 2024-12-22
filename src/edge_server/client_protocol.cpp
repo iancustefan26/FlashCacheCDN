@@ -34,7 +34,7 @@ RequestType parse_request(char *packet)
     return RequestType::EXEC;
 }
 
-void exec_script(char* packet, string* response)
+void exec_script(const char* packet, string* response)
 {
     // A more C++ like style to make an auto-destructible pointer with popen function
     // using unique_ptr and lambda functions
@@ -51,10 +51,7 @@ void exec_script(char* packet, string* response)
 
 string compute_request(char *packet, RequestType request_type)
 {
-    // TODO: Future features
-    // TODO: make different types of behaviour based on the request type
-    // TODO: but for now let's assume that the default is EXEC
-    // TODO: (the edge-server will execute a script and send back the response to the client)
+    // (the edge-server will execute a script and send back the response to the client)
     string response;
     exec_script(packet, &response);
     return response;
@@ -90,6 +87,7 @@ void treat_clients(int socket_sd)
         string response = compute_request(received_packet, type_of_request);
         delete[] received_packet; // Freeing the memory
         if (response[0] == '\0')
+            // Cache MISS
             response = "Resource not found.";
         send_response(client_sd, response);
         close(client_sd);

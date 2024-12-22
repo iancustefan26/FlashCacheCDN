@@ -1,45 +1,55 @@
 [
     {
-        "10.176.86.169": {
-            "load": {
-                "cpu_load": 100.0,
-                "memory_load": {
-                    "available": 1652.06640625,
-                    "used": 310.46875
-                }
-            },
-            "name": "ubuntu",
-            "resources": [
-                "./test",
-                "./test_5_seconds",
-                "./intense_load"
-            ]
-        }
-    },
-    {
         "10.176.86.130": {
             "load": {
                 "cpu_load": 100.0,
                 "memory_load": {
-                    "available": 1659.16796875,
-                    "used": 303.3671875
+                    "available": 1659.2109375,
+                    "used": 303.32421875
                 }
             },
             "name": "ubuntu",
             "resources": [
+                "./find_primes",
+                "./intense_load",
                 "./test",
-                "./test_5_seconds",
-                "./intense_load"
+                "./test_5_seconds"
             ]
+        }
+    },
+    {
+        "10.176.86.65": {
+            "load": {
+                "cpu_load": 4.600000381469727,
+                "memory_load": {
+                    "available": 1660.0546875,
+                    "used": 302.49609375
+                }
+            },
+            "name": "ubuntu",
+            "resources": []
+        }
+    },
+    {
+        "10.176.86.169": {
+            "load": {
+                "cpu_load": 4.104101657867432,
+                "memory_load": {
+                    "available": 1654.11328125,
+                    "used": 308.421875
+                }
+            },
+            "name": "ubuntu",
+            "resources": []
         }
     },
     {
         "10.176.86.1": {
             "load": {
-                "cpu_load": 6.092148780822754,
+                "cpu_load": 11.434441566467285,
                 "memory_load": {
-                    "available": 56141.9609375,
-                    "used": 7794.8515625
+                    "available": 49884.7578125,
+                    "used": 14052.0546875
                 }
             },
             "name": "laptop26",
