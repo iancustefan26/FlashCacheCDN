@@ -4,6 +4,7 @@ chmod +x src/install_build_scripts/spawn_egde_servers.sh
 
 sudo ./src/install_build_scripts/install_dependencies.sh
 
+
 ./src/install_build_scripts/spawn_egde_servers.sh
 
 echo "Set your EDNS server IP"
@@ -19,18 +20,23 @@ echo ""
 
 echo ""
 echo ""
-echo "mkdir build" 
-echo "cd build"
-echo "cmake .."
-echo "make"
+
+mkdir build
+cd build
+cmake ..
+make
+
+echo ""
+echo "Run multipass (to see a GUI of the edge servers) by using this command : multipass.gui"
+
 
 echo "Run the server, EDNS server, edge servers and then the client. Test by using ./(test/test_5_seconds/intese_load/find_primes) available resources from /src/edge_server/available_resources"
-
+echo ""
 echo "./test prints Hello World!"
 echo "./test prints Hello World! after 5 seconds of sleep"
 echo "./find_primes print the prime numbers up to 100"
 echo "./intense_load triggers an infinite loop on the chosen machine"
-
+echo ""
 echo "P.S: The project directory is mounted to the edge-servers (so all the edge-server will have all the resources available). If you want to test what happens if you request a resource that is not available on all the edge-servers you will have to manually copy the file directory to a VM or another machine and create your own scripts there in src/edge-servers/available_resources that will be autamatically compiled at build time."
 
 echo ""

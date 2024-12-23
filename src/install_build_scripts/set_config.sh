@@ -2,7 +2,7 @@
 
 cfg_file="./../client/config/resolv.ini"
 
-echo "IP address of the DNS server:"
+echo "IP address of the DNS server: (Run multipass.gui and pick an edge-server)"
 read -r ip
 
 if [[ ! $ip =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
