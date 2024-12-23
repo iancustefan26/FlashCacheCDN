@@ -1,0 +1,92 @@
+[
+    {
+        "10.176.86.169": {
+            "load": {
+                "cpu_load": 5.694305896759033,
+                "memory_load": {
+                    "available": 1659.62109375,
+                    "used": 302.9140625
+                }
+            },
+            "name": "ubuntu",
+            "resources": [
+                "./find_primes",
+                "./intense_load",
+                "./test",
+                "./test_5_seconds"
+            ]
+        }
+    },
+    {
+        "10.176.86.130": {
+            "load": {
+                "cpu_load": 7.392609119415283,
+                "memory_load": {
+                    "available": 1659.0,
+                    "used": 303.53515625
+                }
+            },
+            "name": "ubuntu",
+            "resources": [
+                "./find_primes",
+                "./intense_load",
+                "./test",
+                "./test_5_seconds"
+            ]
+        }
+    },
+    {
+        "10.176.86.215": {
+            "load": {
+                "cpu_load": 100.0,
+                "memory_load": {
+                    "available": 1658.515625,
+                    "used": 304.03515625
+                }
+            },
+            "name": "ubuntu",
+            "resources": [
+                "./find_primes",
+                "./intense_load",
+                "./test",
+                "./test_5_seconds"
+            ]
+        }
+    },
+    {
+        "10.176.86.65": {
+            "load": {
+                "cpu_load": 4.000001907348633,
+                "memory_load": {
+                    "available": 1658.71875,
+                    "used": 303.83203125
+                }
+            },
+            "name": "ubuntu",
+            "resources": [
+                "./find_primes",
+                "./intense_load",
+                "./test",
+                "./test_5_seconds"
+            ]
+        }
+    },
+    {
+        "10.176.86.67": {
+            "load": {
+                "cpu_load": 4.2999982833862305,
+                "memory_load": {
+                    "available": 1653.0234375,
+                    "used": 309.51171875
+                }
+            },
+            "name": "ubuntu",
+            "resources": [
+                "./find_primes",
+                "./intense_load",
+                "./test",
+                "./test_5_seconds"
+            ]
+        }
+    }
+]
