@@ -60,7 +60,7 @@ chmod u+x steps_to_build_and_run.sh
 ## Visual Demonstrations
 
 ### Concurrent Requests Handling
-![Concurrent Requests](concurrent_requests.png)
+![Concurrent Requests](examples/concurrent_requests.png)
 **Description**: This image demonstrates the system's capability to handle multiple concurrent requests efficiently, running 5 instances of edges
 
 ### Load Handling
@@ -71,8 +71,7 @@ chmod u+x steps_to_build_and_run.sh
 **Description**: This image captures the system in a running state, showing real-time data flow and server interactions.
 
 ### Presentation Video
-![Presentation](examples/presentation.mp4)
-**Description**: A comprehensive video presentation explaining the project's architecture, features, and benefits, along with a demonstration of the system in action.
+Check `examples/presentation.mp4`.
 
 ## Real-world Use Case
 An aviation company uses FlashCacheCDN to distribute its online booking service globally, improving load times and increasing profitability by deploying edge servers in strategic locations so UX will be better by getting better response times from the website.
