@@ -2,7 +2,7 @@
 # FlashCacheCDN
 
 ## Overview
-FlashCacheCDN is a Content Delivery Network (CDN) designed to optimize data delivery speed, reduce latency, and enhance user experience. By distributing nodes across various geographical locations, mySCDN ensures optimal resource allocation, minimal costs, and high service quality.
+FlashCacheCDN is a Content Delivery Network (CDN) designed to optimize data delivery speed, reduce latency, and enhance UX. By making software for distributing nodes across various geographical locations, ensures optimal resource allocation, minimal costs, and high service quality.
 
 ## Applied Technologies
 - **Transport Protocol**: TCP to ensure reliable packet transmission, even for EDNS0 server that uses more complex derivation of DNS protocol.
