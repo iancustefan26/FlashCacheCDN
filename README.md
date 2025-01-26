@@ -31,7 +31,7 @@ The architecture includes four main entities:
 - **Concurrency Management**: Thread pools in edge servers, multiplexing in the EDNS server, and pre-forking in the main server with the number of processes = edge servers. 
 - **Protocols**: At the Application layer (over TCP at transport layer): custom protocols for communication between clients, edge servers,  and the main server using JSON and efficient packet structures.
 
-## Potential Improvements
+## Potential Improvements (future updates)
 - Anti-DoS/DDoS protection with rate limiting.
 - Enhanced caching algorithms (e.g., LFU, LRU) on edge servers.
 - Caching mechanisms for lookups on the EDNS server.
@@ -84,4 +84,4 @@ An aviation company uses FlashCacheCDN to distribute its online booking service 
 For more detailed information, refer to the `docs_EN.pdf` documentation included in the repository.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the GNU GPL License. See the LICENSE file for details.
